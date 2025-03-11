@@ -84,6 +84,7 @@ class InputField: UIView, UITextFieldDelegate {
 
         textField.delegate = self
         textField.addTarget(self, action: #selector(valueChanged), for: .valueChanged)
+        textField.addTarget(self, action: #selector(valueChanged), for: .editingChanged)
     }
 
     @available(*, unavailable)
@@ -92,7 +93,7 @@ class InputField: UIView, UITextFieldDelegate {
     }
 
     func updateQuickOptionImage() {
-        if textField.text?.isEmpty == true {
+        if (textField.text ?? "").isEmpty == true {
             quickOptionButton.setImage(UIImage(systemName: "doc.on.clipboard"), for: .normal)
         } else {
             quickOptionButton.setImage(UIImage(systemName: "xmark.circle.fill"), for: .normal)
@@ -100,7 +101,7 @@ class InputField: UIView, UITextFieldDelegate {
     }
 
     @objc func tappedOptionButton() {
-        if textField.text?.isEmpty == true {
+        if (textField.text ?? "").isEmpty == true {
             textField.text = UIPasteboard.general.string
             valueChanged()
         } else {
