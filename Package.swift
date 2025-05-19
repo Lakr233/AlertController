@@ -7,8 +7,8 @@ let package = Package(
     name: "AlertController",
     defaultLocalization: "en",
     platforms: [
-        .iOS(.v15),
-        .macCatalyst(.v15),
+        .iOS(.v13),
+        .macCatalyst(.v13),
     ],
     products: [
         .library(name: "AlertController", targets: ["AlertController"]),

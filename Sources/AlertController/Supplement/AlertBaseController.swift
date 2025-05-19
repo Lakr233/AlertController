@@ -62,6 +62,10 @@ open class AlertBaseController: AlertControllerObject {
         fatalError()
     }
 
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+
     override open var keyCommands: [UIKeyCommand]? {
         [
             UIKeyCommand(
@@ -99,12 +103,33 @@ open class AlertBaseController: AlertControllerObject {
                 contentLayoutGuide.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -16),
             ])
         #else
-            NSLayoutConstraint.activate([
-                contentLayoutGuide.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
-                contentLayoutGuide.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 16),
-                contentLayoutGuide.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -16),
-                contentLayoutGuide.bottomAnchor.constraint(equalTo: view.keyboardLayoutGuide.topAnchor, constant: -16),
-            ])
+            if #available(iOS 15.0, macCatalyst 15.0, *) /* , false */ {
+                NSLayoutConstraint.activate([
+                    contentLayoutGuide.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
+                    contentLayoutGuide.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 16),
+                    contentLayoutGuide.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -16),
+                    contentLayoutGuide.bottomAnchor.constraint(equalTo: view.keyboardLayoutGuide.topAnchor, constant: -16),
+                ])
+            } else {
+                NSLayoutConstraint.activate([
+                    contentLayoutGuide.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
+                    contentLayoutGuide.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 16),
+                    contentLayoutGuide.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -16),
+                    contentLayoutGuide.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
+                ])
+                NotificationCenter.default.addObserver(
+                    self,
+                    selector: #selector(keyboardWillShow(_:)),
+                    name: UIResponder.keyboardWillShowNotification,
+                    object: nil
+                )
+                NotificationCenter.default.addObserver(
+                    self,
+                    selector: #selector(keyboardWillHide(_:)),
+                    name: UIResponder.keyboardWillHideNotification,
+                    object: nil
+                )
+            }
         #endif
 
         contentView.backgroundColor = .clear
@@ -143,6 +168,36 @@ open class AlertBaseController: AlertControllerObject {
 
     open func contentViewLayout(in bounds: CGRect) {
         _ = bounds
+    }
+
+    @objc func keyboardWillShow(_ notification: Notification) {
+        let keyboardRect = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect
+        let keyboardHeightValue = keyboardRect?.height ?? 0
+        let keyboardHeight = keyboardHeightValue > 0 ? keyboardHeightValue : 0
+        let animation = notification.userInfo?[UIResponder.keyboardAnimationCurveUserInfoKey] as? UInt
+        let animationDuration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval
+        UIView.animate(
+            withDuration: animationDuration ?? 0.25,
+            delay: 0,
+            options: UIView.AnimationOptions(rawValue: animation ?? 0)
+        ) {
+            // because we are at the center of the screen, so dividing by 2
+            self.contentLayoutGuide.owningView?.bounds.origin.y += keyboardHeight / 2
+            self.view.layoutIfNeeded()
+        }
+    }
+
+    @objc func keyboardWillHide(_ notification: Notification) {
+        let animation = notification.userInfo?[UIResponder.keyboardAnimationCurveUserInfoKey] as? UInt
+        let animationDuration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval
+        UIView.animate(
+            withDuration: animationDuration ?? 0.25,
+            delay: 0,
+            options: UIView.AnimationOptions(rawValue: animation ?? 0)
+        ) {
+            self.contentLayoutGuide.owningView?.bounds.origin.y = 0
+            self.view.layoutIfNeeded()
+        }
     }
 
     func contentViewBounce() {

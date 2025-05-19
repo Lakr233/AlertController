@@ -13,8 +13,8 @@ public class AlertInputViewController: AlertViewController {
         message: String = "",
         placeholder: String,
         text: String,
-        cancelButtonText: String = String(localized: "Cancel"),
-        doneButtonText: String = String(localized: "Done"),
+        cancelButtonText: String = NSLocalizedString("Cancel", comment: ""),
+        doneButtonText: String = NSLocalizedString("Done", comment: ""),
         onConfirm: @escaping (String) -> Void
     ) {
         let controller = AlertInputContentController(
