@@ -13,4 +13,6 @@ public enum AlertControllerConfiguration {
     public static var accentColor: UIColor = .red
     public static var separatorColor: UIColor = .separator
     public static var backgroundColor: UIColor = .systemBackground
+
+    public static var module: Bundle = .module
 }
