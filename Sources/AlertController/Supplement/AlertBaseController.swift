@@ -66,18 +66,6 @@ open class AlertBaseController: AlertControllerObject {
         NotificationCenter.default.removeObserver(self)
     }
 
-    override open var keyCommands: [UIKeyCommand]? {
-        [
-            UIKeyCommand(
-                title: NSLocalizedString("Close", bundle: .module, comment: ""),
-                action: #selector(escapePressed), // escape
-                input: "\u{1b}",
-                modifierFlags: [],
-                propertyList: nil
-            ),
-        ]
-    }
-
     override open func viewDidLoad() {
         super.viewDidLoad()
         defer { contentView.sendSubviewToBack(contentBackgroundView) }
@@ -219,6 +207,17 @@ open class AlertBaseController: AlertControllerObject {
         } else {
             contentViewBounce()
         }
+    }
+
+    override open func pressesBegan(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
+        for press in presses {
+            guard let key = press.key else { continue }
+            if key.keyCode == .keyboardEscape {
+                escapePressed()
+                return
+            }
+        }
+        super.pressesBegan(presses, with: event)
     }
 
     @objc open func escapePressed() {
