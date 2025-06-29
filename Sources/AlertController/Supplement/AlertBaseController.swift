@@ -18,8 +18,8 @@ open class AlertBaseController: AlertControllerObject {
     public let contentBackgroundView = UIVisualEffectView(
         effect: UIBlurEffect(style: .systemUltraThinMaterial)
     )
-    public var shouldDismissWhenTappedAround = false
-    public var shouldDismissWhenEscapeKeyPressed = false
+    open var shouldDismissWhenTappedAround = false
+    open var shouldDismissWhenEscapeKeyPressed = false
 
     public init() {
         super.init(nibName: nil, bundle: nil)
@@ -229,7 +229,7 @@ open class AlertBaseController: AlertControllerObject {
         }
     }
 
-    override public func viewDidAppear(_ animated: Bool) {
+    override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
         // resign from firstResponder to avoid escape key not working

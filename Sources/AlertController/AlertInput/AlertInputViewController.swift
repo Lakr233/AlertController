@@ -7,7 +7,7 @@
 
 import UIKit
 
-public class AlertInputViewController: AlertViewController {
+open class AlertInputViewController: AlertViewController {
     public convenience init(
         title: String = "",
         message: String = "",
@@ -49,7 +49,7 @@ public class AlertInputViewController: AlertViewController {
         self.init(contentViewController: controller)
     }
 
-    required init(contentViewController: UIViewController) {
+    public required init(contentViewController: UIViewController) {
         super.init(contentViewController: contentViewController)
     }
 }

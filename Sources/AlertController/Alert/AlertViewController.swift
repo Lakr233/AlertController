@@ -5,7 +5,7 @@
 
 import UIKit
 
-public class AlertViewController: AlertBaseController {
+open class AlertViewController: AlertBaseController {
     let contentViewController: UIViewController
 
     public convenience init(
@@ -21,7 +21,7 @@ public class AlertViewController: AlertBaseController {
         self.init(contentViewController: controller)
     }
 
-    required init(contentViewController: UIViewController) {
+    public required init(contentViewController: UIViewController) {
         self.contentViewController = contentViewController
         super.init(
             rootViewController: contentViewController,
@@ -35,16 +35,16 @@ public class AlertViewController: AlertBaseController {
     }
 
     @available(*, unavailable)
-    required init?(coder _: NSCoder) {
+    public required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override public func viewDidLoad() {
+    override open func viewDidLoad() {
         super.viewDidLoad()
         contentView.layer.cornerRadius = 20
     }
 
-    override public func contentViewDidLoad() {
+    override open func contentViewDidLoad() {
         super.contentViewDidLoad()
         addChild(contentViewController)
         contentView.addSubview(contentViewController.view)

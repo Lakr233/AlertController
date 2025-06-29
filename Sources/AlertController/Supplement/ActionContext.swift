@@ -7,7 +7,7 @@
 
 import UIKit
 
-public class ActionContext {
+open class ActionContext {
     public typealias ActionBlock = () -> Void
     public typealias DismissBlock = () -> Void
     public typealias DismissHandler = (@escaping DismissBlock) -> Void
@@ -29,7 +29,7 @@ public class ActionContext {
         }
     }
 
-    public func addAction(
+    open func addAction(
         title: String,
         attribute: Action.Attribute = .normal,
         block: @escaping () -> Void
@@ -41,7 +41,7 @@ public class ActionContext {
         ))
     }
 
-    public func dispose(_ completion: @escaping () -> Void = {}) {
+    open func dispose(_ completion: @escaping () -> Void = {}) {
         let generator = UINotificationFeedbackGenerator()
         generator.notificationOccurred(.success)
         dismissHandler?(completion)

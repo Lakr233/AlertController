@@ -7,7 +7,7 @@
 
 import UIKit
 
-public class AlertProgressIndicatorViewController: AlertViewController {
+open class AlertProgressIndicatorViewController: AlertViewController {
     public convenience init(
         title: String = "",
         message: String = ""
@@ -19,7 +19,7 @@ public class AlertProgressIndicatorViewController: AlertViewController {
         self.init(contentViewController: controller)
     }
 
-    required init(contentViewController: UIViewController) {
+    public required init(contentViewController: UIViewController) {
         super.init(contentViewController: contentViewController)
     }
 }
