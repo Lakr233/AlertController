@@ -10,6 +10,8 @@ import UIKit
 class AlertInputContentController: AlertContentController {
     let field = InputField()
 
+    private var submitAction: (ActionContext) -> Void = { _ in }
+
     init(
         title: String = "",
         message: String = "",
@@ -25,9 +27,11 @@ class AlertInputContentController: AlertContentController {
         field.textPublisher = { [weak self] text in
             self?.context.userObject = text
         }
-        let captureContext = context
-        field.stopPublisher = { onSubmit(captureContext) }
+        field.textReturnAction = { [weak self] in
+            self?.callSubmit()
+        }
         customViews.append(field)
+        submitAction = onSubmit
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -35,14 +39,32 @@ class AlertInputContentController: AlertContentController {
         field.textField.becomeFirstResponder()
         field.updateQuickOptionImage()
     }
+
+    private func callSubmit() {
+        submitAction(context)
+        submitAction = { _ in }
+    }
+}
+
+private class UITextFieldWithoutEscapeToClear: UITextField {
+    override var keyCommands: [UIKeyCommand]? {
+        [
+            UIKeyCommand(
+                input: UIKeyCommand.inputEscape,
+                modifierFlags: [],
+                action: #selector(stub)
+            ),
+        ]
+    }
+
+    @objc func stub() {}
 }
 
 class InputField: UIView, UITextFieldDelegate {
-    let textField = UITextField(frame: .zero)
+    fileprivate let textField = UITextFieldWithoutEscapeToClear(frame: .zero)
 
     var textPublisher: (String) -> Void = { _ in }
-    var stopPublisher: () -> Void = {}
-
+    var textReturnAction: () -> Void = {}
     let quickOptionButton = UIButton()
 
     init() {
@@ -60,6 +82,7 @@ class InputField: UIView, UITextFieldDelegate {
         textField.borderStyle = .none
         textField.autocapitalizationType = .none
         textField.autocorrectionType = .no
+        textField.allowsEditingTextAttributes = false
 
         quickOptionButton.translatesAutoresizingMaskIntoConstraints = false
         quickOptionButton.imageView?.contentMode = .scaleAspectFit
@@ -110,11 +133,6 @@ class InputField: UIView, UITextFieldDelegate {
         }
     }
 
-    func textFieldDidEndEditing(_: UITextField) {
-        collectValue()
-        stopPublisher()
-    }
-
     @objc func valueChanged() {
         updateQuickOptionImage()
         collectValue()
@@ -125,10 +143,9 @@ class InputField: UIView, UITextFieldDelegate {
     }
 
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        if let text = textField.text, !text.isEmpty {
-            textField.resignFirstResponder()
-            return true
-        }
-        return false
+        textField.resignFirstResponder()
+        textReturnAction()
+        textReturnAction = {}
+        return true
     }
 }

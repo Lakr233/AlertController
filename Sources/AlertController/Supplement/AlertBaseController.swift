@@ -35,6 +35,7 @@ open class AlertBaseController: AlertControllerObject {
         super.init(nibName: nil, bundle: nil)
         transitioningDelegate = self
         modalPresentationStyle = .custom
+        isModalInPresentation = true
         addChild(rootViewController)
         rootViewController.view.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(rootViewController.view)
