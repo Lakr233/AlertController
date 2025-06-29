@@ -228,6 +228,18 @@ open class AlertBaseController: AlertControllerObject {
         }
     }
 
+    override public func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        // resign from firstResponder to avoid escape key not working
+        if shouldDismissWhenEscapeKeyPressed,
+           let firstResponder = view.window?.firstResponder()
+        {
+            firstResponder.resignFirstResponder()
+            view.becomeFirstResponder()
+        }
+    }
+
     open func animationController(
         forPresented _: UIViewController,
         presenting _: UIViewController,
@@ -249,5 +261,21 @@ open class AlertBaseController: AlertControllerObject {
             presentedViewController: presented,
             presenting: presenting
         )
+    }
+}
+
+private extension UIView {
+    func firstResponder() -> UIView? {
+        var views = [UIView](arrayLiteral: self)
+        var index = 0
+        repeat {
+            let view = views[index]
+            if view.isFirstResponder {
+                return view
+            }
+            views.append(contentsOf: view.subviews)
+            index += 1
+        } while index < views.count
+        return nil
     }
 }
