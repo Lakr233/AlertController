@@ -93,6 +93,9 @@ class AlertContentController: UIViewController {
                 titleLabel.leadingAnchor.constraint(equalTo: stackView.leadingAnchor, constant: 16),
                 titleLabel.trailingAnchor.constraint(equalTo: stackView.trailingAnchor, constant: -16),
             ])
+            let heightConstraint = titleLabel.heightAnchor.constraint(lessThanOrEqualToConstant: 80)
+            heightConstraint.priority = .required
+            NSLayoutConstraint.activate([heightConstraint])
         }
 
         if !messageContent.isEmpty {
@@ -110,6 +113,9 @@ class AlertContentController: UIViewController {
                 messageLabel.leadingAnchor.constraint(equalTo: stackView.leadingAnchor, constant: 16),
                 messageLabel.trailingAnchor.constraint(equalTo: stackView.trailingAnchor, constant: -16),
             ])
+            let heightConstraint = messageLabel.heightAnchor.constraint(lessThanOrEqualToConstant: 300)
+            heightConstraint.priority = .required
+            NSLayoutConstraint.activate([heightConstraint])
         }
 
         for customView in customViews {
