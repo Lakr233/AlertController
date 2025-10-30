@@ -9,12 +9,12 @@ import UIKit
 
 open class AlertProgressIndicatorViewController: AlertViewController {
     public convenience init(
-        title: String = "",
-        message: String = ""
+        title: String.LocalizationValue = "",
+        message: String.LocalizationValue = ""
     ) {
         let controller = AlertProgressIndicatorContentController(
-            title: title,
-            message: message
+            title: String(localized: title),
+            message: String(localized: message)
         ) { _ in }
         self.init(contentViewController: controller)
     }

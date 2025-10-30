@@ -64,7 +64,7 @@ class AlertButton: UIView {
 extension ActionContext.Action {
     var foregroundColor: UIColor {
         switch attribute {
-        case .dangerous:
+        case .accent:
             .white
         case .normal:
             AlertControllerConfiguration.accentColor
@@ -73,7 +73,7 @@ extension ActionContext.Action {
 
     var backgroundColor: UIColor {
         switch attribute {
-        case .dangerous:
+        case .accent:
             AlertControllerConfiguration.accentColor
         case .normal:
             .clear
@@ -89,7 +89,7 @@ extension ActionContext.Action {
 
     var font: UIFont {
         switch attribute {
-        case .dangerous:
+        case .accent:
             .systemFont(ofSize: UIFont.preferredFont(forTextStyle: .body).pointSize, weight: .semibold)
         case .normal:
             .systemFont(ofSize: UIFont.preferredFont(forTextStyle: .body).pointSize, weight: .regular)

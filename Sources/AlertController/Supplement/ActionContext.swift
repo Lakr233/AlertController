@@ -30,12 +30,12 @@ open class ActionContext {
     }
 
     open func addAction(
-        title: String,
+        title: String.LocalizationValue,
         attribute: Action.Attribute = .normal,
         block: @escaping () -> Void
     ) {
         actions.append(.init(
-            title: title,
+            title: String(localized: title),
             attribute: attribute,
             block: block
         ))
@@ -63,6 +63,6 @@ public extension ActionContext {
 public extension ActionContext.Action {
     enum Attribute {
         case normal
-        case dangerous
+        case accent
     }
 }

@@ -9,32 +9,24 @@ import UIKit
 
 open class AlertInputViewController: AlertViewController {
     public convenience init(
-        title: String = "",
-        message: String = "",
-        placeholder: String,
+        title: String.LocalizationValue = "",
+        message: String.LocalizationValue = "",
+        placeholder: String.LocalizationValue,
         text: String,
-        cancelButtonText: String = NSLocalizedString(
-            "Cancel",
-            bundle: AlertControllerConfiguration.module,
-            comment: ""
-        ),
-        doneButtonText: String = NSLocalizedString(
-            "Done",
-            bundle: AlertControllerConfiguration.module,
-            comment: ""
-        ),
+        cancelButtonText: String.LocalizationValue = "Cancel",
+        doneButtonText: String.LocalizationValue = "Done",
         onConfirm: @escaping (String) -> Void
     ) {
         let controller = AlertInputContentController(
-            title: title,
-            message: message,
+            title: String(localized: title),
+            message: String(localized: message),
             originalText: text,
-            placeholder: placeholder
+            placeholder: String(localized: placeholder)
         ) { context in
             context.addAction(title: cancelButtonText) {
                 context.dispose()
             }
-            context.addAction(title: doneButtonText, attribute: .dangerous) {
+            context.addAction(title: doneButtonText, attribute: .accent) {
                 context.dispose {
                     let text = context.userObject as! String
                     onConfirm(text)

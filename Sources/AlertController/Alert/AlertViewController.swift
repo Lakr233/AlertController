@@ -9,13 +9,13 @@ open class AlertViewController: AlertBaseController {
     let contentViewController: UIViewController
 
     public convenience init(
-        title: String = "",
-        message: String = "",
+        title: String.LocalizationValue = "",
+        message: String.LocalizationValue = "",
         setupActions: @escaping (ActionContext) -> Void
     ) {
         let controller = AlertContentController(
-            title: title,
-            message: message,
+            title: String(localized: title),
+            message: String(localized: message),
             setupActions: setupActions
         )
         self.init(contentViewController: controller)

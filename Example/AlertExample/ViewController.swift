@@ -34,7 +34,7 @@ class ViewController: UIViewController {
                     title: "Hello World",
                     message: "This is a message"
                 ) { context in
-                    context.addAction(title: "Delete", attribute: .dangerous) {
+                    context.addAction(title: "Delete", attribute: .accent) {
                         context.dispose { print("deleted") }
                     }
                 }
@@ -48,7 +48,7 @@ class ViewController: UIViewController {
                     context.addAction(title: "Cancel") {
                         context.dispose { print("cancelled") }
                     }
-                    context.addAction(title: "Delete", attribute: .dangerous) {
+                    context.addAction(title: "Delete", attribute: .accent) {
                         context.dispose { print("deleted") }
                     }
                 }
@@ -62,10 +62,10 @@ class ViewController: UIViewController {
                     context.addAction(title: "Cancel") {
                         context.dispose { print("cancelled") }
                     }
-                    context.addAction(title: "Delete", attribute: .dangerous) {
+                    context.addAction(title: "Delete", attribute: .accent) {
                         context.dispose { print("deleted") }
                     }
-                    context.addAction(title: "Delete", attribute: .dangerous) {
+                    context.addAction(title: "Delete", attribute: .accent) {
                         context.dispose { print("deleted") }
                     }
                 }
