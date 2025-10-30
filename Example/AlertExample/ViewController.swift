@@ -38,7 +38,7 @@ class ViewController: UIViewController {
                         context.dispose { print("deleted") }
                     }
                 }
-                controller?.present(alert, animated: true)
+                controller.present(alert, animated: true)
             }),
             .init(icon: "circle", title: "Open Alert w/ 2", ephemeralAnnotation: .action { controller in
                 let alert = AlertViewController(
@@ -52,7 +52,7 @@ class ViewController: UIViewController {
                         context.dispose { print("deleted") }
                     }
                 }
-                controller?.present(alert, animated: true)
+                controller.present(alert, animated: true)
             }),
             .init(icon: "circle", title: "Open Alert w/ 3", ephemeralAnnotation: .action { controller in
                 let alert = AlertViewController(
@@ -69,7 +69,7 @@ class ViewController: UIViewController {
                         context.dispose { print("deleted") }
                     }
                 }
-                controller?.present(alert, animated: true)
+                controller.present(alert, animated: true)
             }),
             .init(icon: "circle", title: "Open Alert w/ Input", ephemeralAnnotation: .action { controller in
                 let alert = AlertInputViewController(
@@ -78,14 +78,14 @@ class ViewController: UIViewController {
                     placeholder: "sth...",
                     text: ""
                 ) { text in print(text) }
-                controller?.present(alert, animated: true)
+                controller.present(alert, animated: true)
             }),
             .init(icon: "circle", title: "Open Alert w/ Progress", ephemeralAnnotation: .action { controller in
                 let alert = AlertProgressIndicatorViewController(
                     title: "Hello World",
                     message: "This is a message from alert."
                 )
-                controller?.present(alert, animated: true)
+                controller.present(alert, animated: true)
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                     alert.dismiss(animated: true)
                 }
@@ -113,7 +113,7 @@ class ViewController: UIViewController {
                     Non minim fugiat aute. Consequat enim excepteur voluptate excepteur dolor mollit. Fugiat eu proident nostrud aliquip veniam sit velit officia anim minim ad est duis labore. Aliquip duis fugiat velit dolore esse elit commodo deserunt aliqua magna amet cillum officia aute magna. Id anim magna veniam sunt culpa et excepteur sunt pariatur. Amet ex magna consectetur reprehenderit tempor aliqua laborum ea magna incididunt eu eu consectetur nulla adipisicing.
                     """
                 )
-                controller?.present(alert, animated: true)
+                controller.present(alert, animated: true)
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                     alert.dismiss(animated: true)
                 }

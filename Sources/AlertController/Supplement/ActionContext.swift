@@ -41,10 +41,14 @@ open class ActionContext {
         ))
     }
 
-    open func dispose(_ completion: @escaping () -> Void = {}) {
+    open func dispose(_ completion: @escaping @MainActor () async -> Void = {}) {
         let generator = UINotificationFeedbackGenerator()
         generator.notificationOccurred(.success)
-        dismissHandler?(completion)
+        dismissHandler? {
+            Task { @MainActor in
+                await completion()
+            }
+        }
     }
 }
 

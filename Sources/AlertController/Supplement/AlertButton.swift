@@ -55,7 +55,7 @@ class AlertButton: UIView {
         UIView.animate(withDuration: 0.25) {
             self.alpha = 1
         }
-        DispatchQueue.main.async {
+        Task { @MainActor in
             self.action.block()
         }
     }
