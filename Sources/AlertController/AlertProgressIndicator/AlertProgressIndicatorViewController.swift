@@ -19,6 +19,7 @@ open class AlertProgressIndicatorViewController: AlertViewController {
         self.init(contentViewController: controller)
     }
 
+    @_disfavoredOverload
     public convenience init(
         title: String = "",
         message: String = ""

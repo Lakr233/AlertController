@@ -41,6 +41,7 @@ open class AlertInputViewController: AlertViewController {
         self.init(contentViewController: controller)
     }
 
+    @_disfavoredOverload
     public convenience init(
         title: String = "",
         message: String = "",

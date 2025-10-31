@@ -41,6 +41,7 @@ open class ActionContext {
         ))
     }
 
+    @_disfavoredOverload
     open func addAction(
         title: String,
         attribute: Action.Attribute = .normal,
