@@ -41,6 +41,26 @@ open class AlertInputViewController: AlertViewController {
         self.init(contentViewController: controller)
     }
 
+    public convenience init(
+        title: String = "",
+        message: String = "",
+        placeholder: String,
+        text: String,
+        cancelButtonText: String = "Cancel",
+        doneButtonText: String = "Done",
+        onConfirm: @escaping (String) -> Void
+    ) {
+        self.init(
+            title: String.LocalizationValue(title),
+            message: String.LocalizationValue(message),
+            placeholder: String.LocalizationValue(placeholder),
+            text: text,
+            cancelButtonText: String.LocalizationValue(cancelButtonText),
+            doneButtonText: String.LocalizationValue(doneButtonText),
+            onConfirm: onConfirm
+        )
+    }
+
     public required init(contentViewController: UIViewController) {
         super.init(contentViewController: contentViewController)
     }

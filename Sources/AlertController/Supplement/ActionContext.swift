@@ -41,6 +41,18 @@ open class ActionContext {
         ))
     }
 
+    open func addAction(
+        title: String,
+        attribute: Action.Attribute = .normal,
+        block: @escaping () -> Void
+    ) {
+        addAction(
+            title: String.LocalizationValue(title),
+            attribute: attribute,
+            block: block
+        )
+    }
+
     open func dispose(_ completion: @escaping @MainActor () async -> Void = {}) {
         let generator = UINotificationFeedbackGenerator()
         generator.notificationOccurred(.success)

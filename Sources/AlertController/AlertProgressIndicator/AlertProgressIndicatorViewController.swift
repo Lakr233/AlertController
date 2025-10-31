@@ -19,6 +19,16 @@ open class AlertProgressIndicatorViewController: AlertViewController {
         self.init(contentViewController: controller)
     }
 
+    public convenience init(
+        title: String = "",
+        message: String = ""
+    ) {
+        self.init(
+            title: String.LocalizationValue(title),
+            message: String.LocalizationValue(message)
+        )
+    }
+
     public required init(contentViewController: UIViewController) {
         super.init(contentViewController: contentViewController)
     }

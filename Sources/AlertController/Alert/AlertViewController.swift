@@ -21,6 +21,18 @@ open class AlertViewController: AlertBaseController {
         self.init(contentViewController: controller)
     }
 
+    public convenience init(
+        title: String = "",
+        message: String = "",
+        setupActions: @escaping (ActionContext) -> Void
+    ) {
+        self.init(
+            title: String.LocalizationValue(title),
+            message: String.LocalizationValue(message),
+            setupActions: setupActions
+        )
+    }
+
     public required init(contentViewController: UIViewController) {
         self.contentViewController = contentViewController
         super.init(
