@@ -16,6 +16,11 @@ open class ActionContext {
     var dismissHandler: DismissHandler?
     var userObject: Any?
 
+    // Set to true when the caller explicitly
+    // opts in to simple ESC dismissal via
+    // `allowSimpleDispose()`.
+    var simpleDisposeRequested = false
+
     let spacing: CGFloat = 16
 
     init() {}
@@ -77,5 +82,11 @@ public extension ActionContext.Action {
     enum Attribute {
         case normal
         case accent
+    }
+}
+
+public extension ActionContext {
+    func allowSimpleDispose() {
+        simpleDisposeRequested = true
     }
 }
