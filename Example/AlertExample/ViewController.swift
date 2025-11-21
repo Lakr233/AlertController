@@ -90,6 +90,16 @@ class ViewController: UIViewController {
                     alert.dismiss(animated: true)
                 }
             }),
+            .init(icon: "circle", title: "Open Alert w/ Escape", ephemeralAnnotation: .action { controller in
+                let alert = AlertViewController(
+                    title: "Hello World",
+                    message: "Press escape key to dismiss this alert."
+                ) { context in
+                    context.allowSimpleDispose()
+                    context.addAction(title: "OK", attribute: .accent) {}
+                }
+                controller.present(alert, animated: true)
+            }),
             .init(icon: "circle", title: "OOB Description", ephemeralAnnotation: .action { controller in
                 let alert = AlertProgressIndicatorViewController(
                     title: "Hello World",
