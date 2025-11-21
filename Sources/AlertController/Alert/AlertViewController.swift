@@ -41,10 +41,18 @@ open class AlertViewController: AlertBaseController {
             preferredWidth: 350,
             preferredHeight: nil
         )
+
+        var enableEscapeDismiss = false
+
+        if let content = contentViewController as? AlertContentController {
+            content.context.bind(to: self)
+            enableEscapeDismiss = content.context.simpleDisposeRequested
+        }
+
         transitioningDelegate = self
         modalPresentationStyle = .custom
         shouldDismissWhenTappedAround = false
-        shouldDismissWhenEscapeKeyPressed = false
+        shouldDismissWhenEscapeKeyPressed = enableEscapeDismiss
     }
 
     @available(*, unavailable)
