@@ -14,6 +14,9 @@ let package = Package(
         .library(name: "AlertController", targets: ["AlertController"]),
     ],
     targets: [
-        .target(name: "AlertController"),
+        .target(
+            name: "AlertController",
+            resources: [.process("Resources")]
+        ),
     ]
 )
