@@ -5,12 +5,11 @@
 //  Created by 秋星桥 on 2/22/25.
 //
 
-import GlyphixTextFx
 import UIKit
 
 class AlertContentController: UIViewController {
     let context: ActionContext
-    private(set) var messageLabel: GlyphixTextLabel?
+    private(set) var messageLabel: UILabel?
 
     let messageTitle: String
     let messageContent: String
@@ -44,22 +43,29 @@ class AlertContentController: UIViewController {
     var customViews: [UIView] = []
 
     func updateMessage(_ message: String, animated: Bool) {
-        let applyChanges = { [self] in
+        guard animated, isViewLoaded, let messageLabel else {
             messageLabel?.text = message
             messageLabel?.isHidden = message.isEmpty
+            return
         }
 
-        guard animated, isViewLoaded else {
-            applyChanges()
-            return
+        let applyText = {
+            UIView.transition(
+                with: messageLabel,
+                duration: 0.25,
+                options: .transitionCrossDissolve
+            ) {
+                messageLabel.text = message
+                messageLabel.isHidden = message.isEmpty
+            }
         }
 
         if let alertController = parent as? AlertBaseController {
             alertController.animateContentSizeChange {
-                applyChanges()
+                applyText()
             }
         } else {
-            applyChanges()
+            applyText()
             UIView.springAnimate(
                 duration: 0.5,
                 dampingRatio: 1.0,
@@ -133,7 +139,7 @@ class AlertContentController: UIViewController {
             NSLayoutConstraint.activate([heightConstraint])
         }
 
-        let messageLabel = GlyphixTextLabel()
+        let messageLabel = UILabel()
         messageLabel.translatesAutoresizingMaskIntoConstraints = false
         messageLabel.text = messageContent
         messageLabel.font = .systemFont(
@@ -143,9 +149,6 @@ class AlertContentController: UIViewController {
         messageLabel.textAlignment = .center
         messageLabel.numberOfLines = 0
         messageLabel.lineBreakMode = .byWordWrapping
-        messageLabel.isBlurEffectEnabled = false
-        messageLabel.clipsToBounds = false
-        messageLabel.layer.masksToBounds = false
         messageLabel.setContentCompressionResistancePriority(.required, for: .vertical)
         messageLabel.isHidden = messageContent.isEmpty
         self.messageLabel = messageLabel

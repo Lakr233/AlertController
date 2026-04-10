@@ -5,11 +5,10 @@
 //  Created by 秋星桥 on 4/10/26.
 //
 
-import GlyphixTextFx
 import UIKit
 
 open class ProgressContext: ActionContext {
-    weak var messageLabel: GlyphixTextLabel?
+    weak var messageLabel: UILabel?
     weak var contentController: AlertContentController?
 
     @MainActor

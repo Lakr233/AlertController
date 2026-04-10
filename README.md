@@ -14,7 +14,7 @@ A modern, customizable alert controller implementation for iOS and macCatalyst a
 - Dismiss and callback handling built in
 - Text input support with clipboard integration
 - Progress indicator for loading states
-- Animated progress text powered by `GlyphixTextFx`
+- Animated progress text with crossfade transitions
 - Customizable accent colors and appearance
 - Smooth animations with spring effects
 - Escape key and outside tap dismissal options
