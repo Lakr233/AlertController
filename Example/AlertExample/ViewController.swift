@@ -9,26 +9,10 @@ import AlertController
 import ConfigurableKit
 import UIKit
 
-class ViewController: UIViewController {
-    let button = UIButton()
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        button.setTitleColor(.blue, for: .normal)
-        button.setTitle("Open Sheet", for: .normal)
-        button.addTarget(self, action: #selector(openPanel), for: .touchUpInside)
-        view.addSubview(button)
-    }
-
-    override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
-        button.sizeToFit()
-        button.center = view.center
-    }
-
-    @objc func openPanel() {
-        let panel = ConfigurableSheetController(manifest: .init(list: [
+enum AlertExampleManifest {
+    @MainActor
+    static func make() -> ConfigurableManifest {
+        .init(title: "Alert Example", list: [
             .init(icon: "circle", title: "Open Alert w/ 1", ephemeralAnnotation: .action { controller in
                 let alert = AlertViewController(
                     title: "Hello World",
@@ -83,10 +67,19 @@ class ViewController: UIViewController {
             .init(icon: "circle", title: "Open Alert w/ Progress", ephemeralAnnotation: .action { controller in
                 let alert = AlertProgressIndicatorViewController(
                     title: "Hello World",
-                    message: "This is a message from alert."
+                    message: ""
                 )
                 controller.present(alert, animated: true)
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                Task { @MainActor in
+                    try? await Task.sleep(for: .milliseconds(500))
+                    alert.progressContext.purpose(message: "Lorem ipsum dolor sit amet.")
+                    try? await Task.sleep(for: .seconds(1))
+                    alert.progressContext.purpose(message: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.")
+                    try? await Task.sleep(for: .seconds(1))
+                    alert.progressContext.purpose(message: "")
+                    try? await Task.sleep(for: .seconds(1))
+                    alert.progressContext.purpose(message: "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.")
+                    try? await Task.sleep(for: .seconds(1))
                     alert.dismiss(animated: true)
                 }
             }),
@@ -116,7 +109,7 @@ class ViewController: UIViewController {
 
                     Quis excepteur velit deserunt labore. Magna pariatur proident amet sint incididunt sunt ad. Nostrud aliquip nisi non commodo et officia ex elit qui minim commodo quis ut id nulla. Qui nulla dolore Lorem velit officia magna mollit velit deserunt sit id qui excepteur.
 
-                    Aliquip reprehenderit irure voluptate cupidatat sit nulla. Cupidatat duis cillum qui consequat ex deserunt anim nostrud esse reprehenderit enim duis proident. Amet fugiat nostrud non enim fugiat in reprehenderit aliqua mollit duis elit dolore fugiat. Cupidatat magna consequat reprehenderit sint aliqua qui consectetur quis nisi non nisi. Minim do pariatur et fugiat consectetur dolore qui cillum irure veniam.
+                    Aliquip reprehenderit irure voluptate cupidatat sit nulla. Cupidatat duis cillum qui consequat ex deserunt anim nostrud esse reprehenderit enim duis proident. Amet fugiat nostrud non enim fugiat in reprehenderit aliqua mollit duis elit dolore fugiat. Cupidatat magna consequat reprehenderit sint aliqua consectetur quis nisi non nisi. Minim do pariatur et fugiat consectetur dolore qui cillum irure veniam.
 
                     Incididunt irure commodo veniam et exercitation non. Deserunt exercitation nostrud quis est mollit ea ex excepteur labore. Officia mollit dolor irure dolore aliquip Lorem aliquip. Nisi magna est consectetur sit mollit tempor adipisicing duis non anim excepteur aliquip dolor consectetur eu. Aute reprehenderit exercitation est qui ut ex sit ad do sint laborum do. Duis pariatur eu elit minim commodo. Commodo fugiat enim adipisicing sunt elit pariatur commodo aliquip irure sit nisi magna est amet voluptate.
 
@@ -124,11 +117,11 @@ class ViewController: UIViewController {
                     """
                 )
                 controller.present(alert, animated: true)
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                Task { @MainActor in
+                    try? await Task.sleep(for: .seconds(2))
                     alert.dismiss(animated: true)
                 }
             }),
-        ]))
-        present(panel, animated: true)
+        ])
     }
 }

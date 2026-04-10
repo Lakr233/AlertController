@@ -64,17 +64,4 @@ open class AlertViewController: AlertBaseController {
         super.viewDidLoad()
         contentView.layer.cornerRadius = 20
     }
-
-    override open func contentViewDidLoad() {
-        super.contentViewDidLoad()
-        addChild(contentViewController)
-        contentView.addSubview(contentViewController.view)
-        contentViewController.didMove(toParent: self)
-        NSLayoutConstraint.activate([
-            contentViewController.view.topAnchor.constraint(equalTo: contentView.topAnchor),
-            contentViewController.view.leftAnchor.constraint(equalTo: contentView.leftAnchor),
-            contentViewController.view.rightAnchor.constraint(equalTo: contentView.rightAnchor),
-            contentViewController.view.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-        ])
-    }
 }

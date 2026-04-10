@@ -13,9 +13,13 @@ let package = Package(
     products: [
         .library(name: "AlertController", targets: ["AlertController"]),
     ],
+    dependencies: [
+        .package(url: "https://github.com/ktiays/GlyphixTextFx.git", from: "2.0.0"),
+    ],
     targets: [
         .target(
             name: "AlertController",
+            dependencies: ["GlyphixTextFx"],
             resources: [.process("Resources")]
         ),
     ]

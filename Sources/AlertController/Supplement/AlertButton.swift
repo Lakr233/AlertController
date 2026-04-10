@@ -9,11 +9,16 @@ import UIKit
 
 class AlertButton: UIView {
     let action: ActionContext.Action
+    let attribute: ActionContext.Action.Attribute
 
     let label = UILabel()
 
-    init(action: ActionContext.Action) {
+    init(
+        action: ActionContext.Action,
+        attribute: ActionContext.Action.Attribute
+    ) {
         self.action = action
+        self.attribute = attribute
         super.init(frame: .zero)
 
         translatesAutoresizingMaskIntoConstraints = false
@@ -21,13 +26,15 @@ class AlertButton: UIView {
         addSubview(label)
 
         label.text = action.title
-        label.textColor = action.foregroundColor
+        label.textColor = attribute.foregroundColor
         label.textAlignment = .center
-        label.font = action.font
+        label.font = attribute.font
+        label.numberOfLines = 0
+        label.lineBreakMode = .byWordWrapping
 
         layer.borderWidth = 1
-        layer.borderColor = action.borderColor.cgColor
-        backgroundColor = action.backgroundColor
+        layer.borderColor = attribute.borderColor.cgColor
+        backgroundColor = attribute.backgroundColor
 
         layer.cornerRadius = 12
         layer.cornerCurve = .continuous
@@ -61,9 +68,9 @@ class AlertButton: UIView {
     }
 }
 
-extension ActionContext.Action {
+extension ActionContext.Action.Attribute {
     var foregroundColor: UIColor {
-        switch attribute {
+        switch self {
         case .accent:
             .white
         case .normal:
@@ -72,7 +79,7 @@ extension ActionContext.Action {
     }
 
     var backgroundColor: UIColor {
-        switch attribute {
+        switch self {
         case .accent:
             AlertControllerConfiguration.accentColor
         case .normal:
@@ -81,14 +88,14 @@ extension ActionContext.Action {
     }
 
     var borderColor: UIColor {
-        switch attribute {
+        switch self {
         default:
             AlertControllerConfiguration.accentColor
         }
     }
 
     var font: UIFont {
-        switch attribute {
+        switch self {
         case .accent:
             .systemFont(ofSize: UIFont.preferredFont(forTextStyle: .body).pointSize, weight: .semibold)
         case .normal:

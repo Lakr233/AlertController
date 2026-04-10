@@ -29,7 +29,7 @@ let alert = AlertViewController(
     context.addAction(title: "Cancel") {
         context.dispose()
     }
-    context.addAction(title: "Confirm", attribute: .dangerous) {
+    context.addAction(title: "Confirm", attribute: .accent) {
         context.dispose {
             // Your code here after confirmation
         }
@@ -55,10 +55,17 @@ present(alert, animated: true)
 ```swift
 let alert = AlertProgressIndicatorViewController(
     title: "Hello World",
-    message: "This is a message from alert."
+    message: "Preparing request..."
 )
 present(alert, animated: true)
-DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+Task { @MainActor in
+    try? await Task.sleep(for: .seconds(1))
+    alert.progressContext.purpose(message: "Lorem ipsum dolor sit amet.")
+    try? await Task.sleep(for: .seconds(1))
+    alert.progressContext.purpose(message: "")
+    try? await Task.sleep(for: .seconds(1))
+    alert.progressContext.purpose(message: "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.")
+    try? await Task.sleep(for: .seconds(1))
     alert.dismiss(animated: true)
 }
 ```

@@ -8,16 +8,31 @@
 import UIKit
 
 class AlertProgressIndicatorContentController: AlertContentController {
-    override init(
+    let progressContext = ProgressContext()
+
+    init(
         title: String = "",
         message: String = "",
         setupActions: @escaping (ActionContext) -> Void
     ) {
-        super.init(title: title, message: message, setupActions: setupActions)
+        super.init(
+            title: title,
+            message: message,
+            context: progressContext,
+            setupActions: setupActions
+        )
 
         let progressIndicatorView = ProgressIndicator()
         customViews.append(HorizontalSeprator())
         customViews.append(progressIndicatorView)
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        progressContext.messageLabel = messageLabel
+        progressContext.contentController = self
+        messageLabel?.numberOfLines = 0
+        messageLabel?.lineBreakMode = .byWordWrapping
     }
 }
 

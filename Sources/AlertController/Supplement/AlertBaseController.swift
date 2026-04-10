@@ -20,8 +20,14 @@ open class AlertBaseController: AlertControllerObject {
     )
     open var shouldDismissWhenTappedAround = false
     open var shouldDismissWhenEscapeKeyPressed = false
+    private let preferredWidth: CGFloat?
+    private let preferredHeight: CGFloat?
+    private var preferredWidthConstraint: NSLayoutConstraint?
+    private var preferredHeightConstraint: NSLayoutConstraint?
 
     public init() {
+        preferredWidth = nil
+        preferredHeight = nil
         super.init(nibName: nil, bundle: nil)
         transitioningDelegate = self
         modalPresentationStyle = .custom
@@ -32,6 +38,8 @@ open class AlertBaseController: AlertControllerObject {
         preferredWidth: CGFloat? = 550,
         preferredHeight: CGFloat? = 550
     ) {
+        self.preferredWidth = preferredWidth
+        self.preferredHeight = preferredHeight
         super.init(nibName: nil, bundle: nil)
         transitioningDelegate = self
         modalPresentationStyle = .custom
@@ -47,14 +55,12 @@ open class AlertBaseController: AlertControllerObject {
         ])
         rootViewController.didMove(toParent: self)
         if let preferredWidth {
-            NSLayoutConstraint.activate([
-                contentView.widthAnchor.constraint(equalToConstant: preferredWidth),
-            ])
+            let constraint = contentView.widthAnchor.constraint(equalToConstant: preferredWidth)
+            preferredWidthConstraint = constraint
         }
         if let preferredHeight {
-            NSLayoutConstraint.activate([
-                contentView.heightAnchor.constraint(equalToConstant: preferredHeight),
-            ])
+            let constraint = contentView.heightAnchor.constraint(equalToConstant: preferredHeight)
+            preferredHeightConstraint = constraint
         }
     }
 
@@ -131,7 +137,15 @@ open class AlertBaseController: AlertControllerObject {
         NSLayoutConstraint.activate([
             contentView.centerXAnchor.constraint(equalTo: contentLayoutGuide.centerXAnchor),
             contentView.centerYAnchor.constraint(equalTo: contentLayoutGuide.centerYAnchor),
+            contentView.leadingAnchor.constraint(greaterThanOrEqualTo: contentLayoutGuide.leadingAnchor),
+            contentView.trailingAnchor.constraint(lessThanOrEqualTo: contentLayoutGuide.trailingAnchor),
+            contentView.topAnchor.constraint(greaterThanOrEqualTo: contentLayoutGuide.topAnchor),
+            contentView.bottomAnchor.constraint(lessThanOrEqualTo: contentLayoutGuide.bottomAnchor),
+            contentView.widthAnchor.constraint(lessThanOrEqualTo: contentLayoutGuide.widthAnchor),
+            contentView.heightAnchor.constraint(lessThanOrEqualTo: contentLayoutGuide.heightAnchor),
         ])
+        preferredWidthConstraint?.isActive = true
+        preferredHeightConstraint?.isActive = true
 
         contentBackgroundView.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(contentBackgroundView)
@@ -152,11 +166,28 @@ open class AlertBaseController: AlertControllerObject {
 
     override open func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
+        updatePreferredContentConstraints()
         contentViewLayout(in: contentView.bounds)
     }
 
     open func contentViewLayout(in bounds: CGRect) {
         _ = bounds
+    }
+
+    private func updatePreferredContentConstraints() {
+        let layoutFrame = contentLayoutGuide.layoutFrame
+        if let preferredWidthConstraint,
+           let preferredWidth,
+           layoutFrame.width > 0
+        {
+            preferredWidthConstraint.constant = min(preferredWidth, layoutFrame.width)
+        }
+        if let preferredHeightConstraint,
+           let preferredHeight,
+           layoutFrame.height > 0
+        {
+            preferredHeightConstraint.constant = min(preferredHeight, layoutFrame.height)
+        }
     }
 
     @objc func keyboardWillShow(_ notification: Notification) {
@@ -193,12 +224,31 @@ open class AlertBaseController: AlertControllerObject {
         UIView.animate(withDuration: 0.05) {
             self.contentView.transform = CGAffineTransform(scaleX: 0.995, y: 0.995)
         } completion: { _ in
-            UIView.animate(
-                withDuration: 0.25,
-                delay: 0,
-                usingSpringWithDamping: 1.0,
-                initialSpringVelocity: 0.8
-            ) { self.contentView.transform = .identity }
+            UIView.springAnimate(
+                duration: 0.25,
+                dampingRatio: 1.0,
+                initialVelocity: 0.8
+            ) {
+                self.contentView.transform = .identity
+            }
+        }
+    }
+
+    func animateContentSizeChange(_ updates: @escaping () -> Void) {
+        guard let layoutContainerView = view.superview ?? view else {
+            updates()
+            return
+        }
+        layoutContainerView.layoutIfNeeded()
+        contentView.transform = CGAffineTransform(scaleX: 1, y: 0.992)
+        UIView.springAnimate(
+            duration: 0.5,
+            dampingRatio: 1.0,
+            initialVelocity: 1.0
+        ) {
+            updates()
+            layoutContainerView.layoutIfNeeded()
+            self.contentView.transform = .identity
         }
     }
 

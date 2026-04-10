@@ -8,6 +8,13 @@
 import UIKit
 
 open class AlertProgressIndicatorViewController: AlertViewController {
+    public var progressContext: ProgressContext {
+        guard let contentViewController = contentViewController as? AlertProgressIndicatorContentController else {
+            preconditionFailure("Expected AlertProgressIndicatorContentController")
+        }
+        return contentViewController.progressContext
+    }
+
     public convenience init(
         title: String.LocalizationValue = "",
         message: String.LocalizationValue = ""
