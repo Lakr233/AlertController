@@ -72,7 +72,7 @@ extension ActionContext.Action.Attribute {
     var foregroundColor: UIColor {
         switch self {
         case .accent:
-            .white
+            AlertControllerConfiguration.accentForegroundColor
         case .normal:
             AlertControllerConfiguration.accentColor
         }

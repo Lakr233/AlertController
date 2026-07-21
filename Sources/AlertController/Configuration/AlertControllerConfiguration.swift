@@ -11,6 +11,7 @@ import UIKit
 public enum AlertControllerConfiguration {
     public static var alertImage: UIImage?
     public static var accentColor: UIColor = .red
+    public static var accentForegroundColor: UIColor = .white
     public static var separatorColor: UIColor = .separator
     public static var backgroundColor: UIColor = .systemBackground
 
