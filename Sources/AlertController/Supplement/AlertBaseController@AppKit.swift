@@ -322,8 +322,10 @@ import Foundation
             }
 
             CATransaction.begin()
-            CATransaction.setCompletionBlock { [weak self] in
-                self?.finishPresentation()
+            // AppKit releases the presented controller once the animator returns,
+            // so the block keeps it alive until the transition finishes.
+            CATransaction.setCompletionBlock { [self] in
+                finishPresentation()
             }
             dimmingLayer.add(
                 AlertAnimation.fade(from: 0, to: 0.25, duration: 0.25),
@@ -379,8 +381,10 @@ import Foundation
             CATransaction.setDisableActions(true)
             dimmingView.alphaValue = 0
             contentView.alphaValue = 0
-            CATransaction.setCompletionBlock { [weak self] in
-                self?.finishDismissal()
+            // AppKit releases the presented controller once the animator returns,
+            // so the block keeps it alive until the transition finishes.
+            CATransaction.setCompletionBlock { [self] in
+                finishDismissal()
             }
             dimmingLayer.add(
                 AlertAnimation.fade(from: dimmingOpacity, to: 0, duration: 0.2),

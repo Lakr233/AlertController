@@ -12,7 +12,7 @@ import SwiftUI
 struct AccentPromotionPage: View {
     private static let code = """
     // No action is marked .accent, so "Install Now", the last one,
-    // is drawn filled and runs when Return is pressed.
+    // is drawn filled and, on macOS, runs when Return is pressed.
     context.addAction(title: "Later") { context.dispose() }
     context.addAction(title: "Remind Me Tonight") { context.dispose() }
     context.addAction(title: "Install Now") { context.dispose() }
@@ -62,7 +62,7 @@ struct AccentPromotionPage: View {
         ]) {
             CatalogPicker("Action marked .accent", selection: $marked, options: Marked.allCases) { $0.rawValue }
             Toggle("Two actions instead of three", isOn: $usesTwoActions)
-            CatalogNote("On a Mac or with a hardware keyboard, Return runs the accent action; with several accent actions it runs the first.")
+            CatalogNote("On native macOS, Return runs the accent action; with several accent actions it runs the first.")
         }
     }
 

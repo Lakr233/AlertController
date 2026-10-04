@@ -39,7 +39,7 @@ struct AttributesPage: View {
             CatalogDemo("Two Accents", systemImage: "circle.fill") {
                 present(
                     title: "Two Accents",
-                    message: "Both filled actions are .accent; Return runs the first one.",
+                    message: "Both filled actions are .accent; on macOS, Return runs the first one.",
                     actions: [("Save", .accent), ("Save and Close", .accent), ("Cancel", .normal)],
                 )
             },

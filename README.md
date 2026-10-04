@@ -103,7 +103,7 @@ present(alert, animated: true)
 // later: alert.dismiss(animated: true)
 ```
 
-Return triggers the accent action, and Escape dismisses the alert when `allowSimpleDispose()` was called, the same as on UIKit. The alert respects Reduce Motion. To drive the presentation yourself, use `present(alert, animator: AlertPresentationAnimator())`.
+Return triggers the accent action (native macOS only; UIKit has no Return shortcut). Escape dismisses the alert when `allowSimpleDispose()` was called, the same as on UIKit. The alert respects Reduce Motion. To drive the presentation yourself, use `present(alert, animator: AlertPresentationAnimator())`.
 
 These types are UIKit only: `AlertPresentationController` and `AlertTransitionAnimator`. On macOS, `AlertPresentationAnimator` takes their place.
 
