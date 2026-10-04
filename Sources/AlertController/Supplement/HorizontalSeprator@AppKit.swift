@@ -1,12 +1,12 @@
 //
-//  SeparatorView@AppKit.swift
+//  HorizontalSeprator@AppKit.swift
 //  AlertController
 //
 
 import Foundation
 
 #if canImport(UIKit)
-// UIKit implementation lives in SeparatorView.swift.
+// UIKit implementation lives in HorizontalSeprator.swift.
 #elseif canImport(AppKit)
     import AppKit
 

@@ -1,5 +1,5 @@
 //
-//  SeparatorView.swift
+//  HorizontalSeprator.swift
 //  AlertController
 //
 //  Created by 秋星桥 on 2/22/25.
