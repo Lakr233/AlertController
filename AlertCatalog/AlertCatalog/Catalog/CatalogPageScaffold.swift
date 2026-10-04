@@ -137,9 +137,14 @@ enum CatalogAutoPresent {
         guard CatalogLaunchOptions.current.isAutoPresenting, !hasRun, let demo else {
             return
         }
-        hasRun = true
-        // Give the window time to become key before presenting into it.
+        // Give the window time to become key before presenting into it. SwiftUI can
+        // replace the page right after launch; the replaced page's task is cancelled,
+        // and running its demo would log into that page's discarded state.
         try? await Task.sleep(for: .milliseconds(800))
+        guard !Task.isCancelled, !hasRun else {
+            return
+        }
+        hasRun = true
         demo.action()
     }
 }
