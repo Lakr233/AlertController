@@ -7,9 +7,7 @@
 //  to the next alert any page presents.
 //
 
-// AlertControllerConfiguration predates Swift 6: its settings are plain static
-// vars, which the catalog only touches from the main actor.
-@preconcurrency import AlertController
+import AlertController
 import SwiftUI
 
 @Observable

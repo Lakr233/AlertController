@@ -46,8 +46,8 @@ struct SingleActionPage: View {
     private func present(title: String, message: String) {
         let log = log
         let actionTitle = actionTitle.isEmpty ? "OK" : actionTitle
-        let alert = AlertViewController(title: title, message: message) { context in
-            context.addAction(title: actionTitle) {
+        let alert = AlertViewController(title: .init(title), message: .init(message)) { context in
+            context.addAction(title: .init(actionTitle)) {
                 log.record("\(actionTitle) on “\(title)”")
                 context.dispose()
             }

@@ -11,15 +11,15 @@
     class AlertInputContentController: AlertContentController {
         let field = InputField()
 
-        private let submitAction: (ActionContext) -> Void
+        private let submitAction: @MainActor (ActionContext) -> Void
 
         init(
             title: String = "",
             message: String = "",
             originalText: String,
             placeholder: String,
-            setupActions: @escaping (ActionContext) -> Void,
-            onSubmit: @escaping (ActionContext) -> Void
+            setupActions: @escaping @MainActor (ActionContext) -> Void,
+            onSubmit: @escaping @MainActor (ActionContext) -> Void
         ) {
             self.submitAction = onSubmit
             super.init(title: title, message: message, setupActions: setupActions)

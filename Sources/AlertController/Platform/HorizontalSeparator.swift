@@ -1,5 +1,5 @@
 //
-//  HorizontalSeprator.swift
+//  HorizontalSeparator.swift
 //  AlertController
 //
 //  Created by 秋星桥 on 2/22/25.
@@ -8,7 +8,7 @@
 #if canImport(UIKit)
     import UIKit
 
-    class HorizontalSeprator: UIView {
+    class HorizontalSeparator: UIView {
         init() {
             super.init(frame: .zero)
             backgroundColor = AlertControllerConfiguration.separatorColor

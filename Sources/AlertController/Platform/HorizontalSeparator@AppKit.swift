@@ -1,16 +1,16 @@
 //
-//  HorizontalSeprator@AppKit.swift
+//  HorizontalSeparator@AppKit.swift
 //  AlertController
 //
 
 import Foundation
 
 #if canImport(UIKit)
-// UIKit implementation lives in HorizontalSeprator.swift.
+// UIKit implementation lives in HorizontalSeparator.swift.
 #elseif canImport(AppKit)
     import AppKit
 
-    class HorizontalSeprator: AlertColorView {
+    class HorizontalSeparator: AlertColorView {
         init() {
             super.init(fillColor: AlertControllerConfiguration.separatorColor)
             heightAnchor.constraint(equalToConstant: 1).isActive = true

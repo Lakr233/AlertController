@@ -9,7 +9,7 @@ public extension AlertViewController {
     convenience init(
         title: String.LocalizationValue = "",
         message: String.LocalizationValue = "",
-        setupActions: @escaping (ActionContext) -> Void
+        setupActions: @escaping @MainActor (ActionContext) -> Void
     ) {
         let controller = AlertContentController(
             title: String(localized: title),
@@ -17,18 +17,5 @@ public extension AlertViewController {
             setupActions: setupActions
         )
         self.init(contentViewController: controller)
-    }
-
-    @_disfavoredOverload
-    convenience init(
-        title: String = "",
-        message: String = "",
-        setupActions: @escaping (ActionContext) -> Void
-    ) {
-        self.init(
-            title: String.LocalizationValue(title),
-            message: String.LocalizationValue(message),
-            setupActions: setupActions
-        )
     }
 }

@@ -26,17 +26,6 @@ open class AlertProgressIndicatorViewController: AlertViewController {
         self.init(contentViewController: controller)
     }
 
-    @_disfavoredOverload
-    public convenience init(
-        title: String = "",
-        message: String = ""
-    ) {
-        self.init(
-            title: String.LocalizationValue(title),
-            message: String.LocalizationValue(message)
-        )
-    }
-
     public required init(contentViewController: PlatformViewController) {
         super.init(contentViewController: contentViewController)
     }

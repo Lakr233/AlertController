@@ -13,10 +13,11 @@ import Foundation
     import AppKit
 #endif
 
+@MainActor
 open class ActionContext {
-    public typealias ActionBlock = () -> Void
-    public typealias DismissBlock = () -> Void
-    public typealias DismissHandler = (@escaping DismissBlock) -> Void
+    public typealias ActionBlock = @MainActor () -> Void
+    public typealias DismissBlock = @MainActor () -> Void
+    public typealias DismissHandler = @MainActor (@escaping DismissBlock) -> Void
 
     var actions = [Action]()
     var dismissHandler: DismissHandler?
@@ -90,26 +91,13 @@ open class ActionContext {
     open func addAction(
         title: String.LocalizationValue,
         attribute: Action.Attribute = .normal,
-        block: @escaping () -> Void
+        block: @escaping ActionBlock
     ) {
         actions.append(.init(
             title: Self.localizedString(title),
             attribute: attribute,
             block: block
         ))
-    }
-
-    @_disfavoredOverload
-    open func addAction(
-        title: String,
-        attribute: Action.Attribute = .normal,
-        block: @escaping () -> Void
-    ) {
-        addAction(
-            title: String.LocalizationValue(title),
-            attribute: attribute,
-            block: block
-        )
     }
 
     open func dispose(_ completion: @escaping @MainActor () async -> Void = {}) {

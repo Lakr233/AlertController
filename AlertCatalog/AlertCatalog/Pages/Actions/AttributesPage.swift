@@ -57,9 +57,9 @@ struct AttributesPage: View {
         actions: [(title: String, attribute: ActionContext.Action.Attribute)],
     ) {
         let log = log
-        let alert = AlertViewController(title: title, message: message) { context in
+        let alert = AlertViewController(title: .init(title), message: .init(message)) { context in
             for action in actions {
-                context.addAction(title: action.title, attribute: action.attribute) {
+                context.addAction(title: .init(action.title), attribute: action.attribute) {
                     log.record("\(action.title) (\(action.attribute == .accent ? ".accent" : ".normal"))")
                     context.dispose()
                 }

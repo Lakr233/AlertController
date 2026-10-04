@@ -48,7 +48,7 @@ struct BasicAlertPage: View {
 
     private func present(title: String, message: String) {
         let log = log
-        let alert = AlertViewController(title: title, message: message) { context in
+        let alert = AlertViewController(title: .init(title), message: .init(message)) { context in
             context.addAction(title: "Cancel") {
                 log.record("Cancel")
                 context.dispose()

@@ -38,15 +38,15 @@ import Foundation
         init(
             title: String = "",
             message: String = "",
-            context: ActionContext = .init(),
-            setupActions: @escaping (ActionContext) -> Void
+            context: ActionContext? = nil,
+            setupActions: @escaping @MainActor (ActionContext) -> Void
         ) {
-            self.context = context
+            self.context = context ?? ActionContext()
             messageTitle = title
             messageContent = message
             super.init(nibName: nil, bundle: nil)
 
-            setupActions(context)
+            setupActions(self.context)
         }
 
         @available(*, unavailable)
@@ -137,7 +137,7 @@ import Foundation
             for customView in customViews {
                 stackView.addArrangedSubview(customView)
                 customView.translatesAutoresizingMaskIntoConstraints = false
-                let inset = customView is HorizontalSeprator ? 0 : Self.horizontalInset
+                let inset = customView is HorizontalSeparator ? 0 : Self.horizontalInset
                 pinHorizontally(customView, inset: inset)
             }
 

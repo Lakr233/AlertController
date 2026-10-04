@@ -47,7 +47,7 @@ struct DismissalPage: View {
         let log = log
         let alert = AlertViewController(
             title: "Keyboard Shortcuts",
-            message: message(escape: escape, tapAround: tapAround),
+            message: .init(message(escape: escape, tapAround: tapAround)),
         ) { context in
             if escape {
                 context.allowSimpleDispose()

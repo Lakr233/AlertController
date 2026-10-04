@@ -15,9 +15,9 @@ open class AlertInputViewController: AlertViewController {
         text: String,
         cancelButtonText: String.LocalizationValue = "Cancel",
         doneButtonText: String.LocalizationValue = "Done",
-        onConfirm: @escaping (String) -> Void
+        onConfirm: @escaping @MainActor (String) -> Void
     ) {
-        let confirm: (ActionContext) -> Void = { context in
+        let confirm: @MainActor (ActionContext) -> Void = { context in
             context.dispose { onConfirm(context.userObject as! String) }
         }
         let controller = AlertInputContentController(
@@ -36,27 +36,6 @@ open class AlertInputViewController: AlertViewController {
             onSubmit: confirm
         )
         self.init(contentViewController: controller)
-    }
-
-    @_disfavoredOverload
-    public convenience init(
-        title: String = "",
-        message: String = "",
-        placeholder: String,
-        text: String,
-        cancelButtonText: String = "Cancel",
-        doneButtonText: String = "Done",
-        onConfirm: @escaping (String) -> Void
-    ) {
-        self.init(
-            title: String.LocalizationValue(title),
-            message: String.LocalizationValue(message),
-            placeholder: String.LocalizationValue(placeholder),
-            text: text,
-            cancelButtonText: String.LocalizationValue(cancelButtonText),
-            doneButtonText: String.LocalizationValue(doneButtonText),
-            onConfirm: onConfirm
-        )
     }
 
     public required init(contentViewController: PlatformViewController) {

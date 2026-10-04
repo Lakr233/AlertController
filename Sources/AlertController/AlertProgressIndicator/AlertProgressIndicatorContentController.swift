@@ -14,7 +14,7 @@
         init(
             title: String = "",
             message: String = "",
-            setupActions: @escaping (ActionContext) -> Void
+            setupActions: @escaping @MainActor (ActionContext) -> Void
         ) {
             super.init(
                 title: title,
@@ -23,7 +23,7 @@
                 setupActions: setupActions
             )
 
-            customViews.append(HorizontalSeprator())
+            customViews.append(HorizontalSeparator())
             customViews.append(ProgressIndicator())
         }
 

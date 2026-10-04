@@ -28,7 +28,7 @@ Add the following to your `Package.swift` dependencies:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/Lakr233/AlertController.git", from: "2.2.1")
+    .package(url: "https://github.com/Lakr233/AlertController.git", from: "3.0.0")
 ]
 ```
 
@@ -119,7 +119,28 @@ AlertControllerConfiguration.accentColor = .systemBlue
 AlertControllerConfiguration.alertImage = UIImage(named: "YourImage") // NSImage on macOS
 ```
 
-`AlertControllerConfiguration` uses the `PlatformColor` and `PlatformImage` type aliases, which are `UIColor` / `UIImage` on UIKit and `NSColor` / `NSImage` on AppKit.
+`AlertControllerConfiguration` uses the `PlatformColor` and `PlatformImage` type aliases, which are `UIColor` / `UIImage` on UIKit and `NSColor` / `NSImage` on AppKit. It is isolated to the main actor, so a Swift 6 app sets it from main-actor code without `@preconcurrency`.
+
+## Localization
+
+Titles, messages, placeholders and action titles are `String.LocalizationValue`, looked up in your app's string catalog. An interpolated literal becomes a format argument, so `"You have \(count) unread messages."` is looked up under the key `You have %lld unread messages.`
+
+Wrap a `String` made at run time with `.init(_:)`. It is looked up as a key, and text with no translation shows as it is:
+
+```swift
+AlertViewController(title: "Upload Failed", message: .init(error.localizedDescription)) { context in
+    context.addAction(title: "OK") { context.dispose() }
+}
+```
+
+## Migrating from 2.x
+
+3.0 changes the API in four ways:
+
+- **Plain `String` overloads are gone.** Every initializer and `addAction(title:)` takes `String.LocalizationValue` only. In 2.x, the `String` overloads won over literals, so an interpolated title or message never found its translation. Literals compile unchanged; wrap `String` variables with `.init(_:)`.
+- **`ActionContext` and `AlertControllerConfiguration` are `@MainActor`.** Action blocks, `setupActions`, dispose completions and `onConfirm` are `@MainActor` closures. Closure literals written where you present an alert need no change.
+- **`dispose()` runs at most once per alert.** A second call is ignored, so a double tap cannot run an action's completion twice. When the alert is already gone, the completion runs immediately.
+- **Default Cancel and Done are translated by the package**, after looking in your app's string catalog first.
 
 ## Catalog
 
@@ -147,7 +168,7 @@ The catalog needs iOS 17 or macOS 14; the package itself supports the versions b
 ## Requirements
 
 - iOS 15.0+ / Mac Catalyst 15.0+ / macOS 12.0+
-- Swift 5.9+
+- Swift 5.9+ (Swift 6 language mode is supported)
 
 ## License
 

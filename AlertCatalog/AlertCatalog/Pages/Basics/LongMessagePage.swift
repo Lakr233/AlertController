@@ -45,7 +45,7 @@ struct LongMessagePage: View {
         let message = (1 ... paragraphCount)
             .map { "\($0). \(Self.paragraph)" }
             .joined(separator: "\n\n")
-        let alert = AlertViewController(title: title, message: message) { context in
+        let alert = AlertViewController(title: .init(title), message: .init(message)) { context in
             context.addAction(title: "Decline") {
                 log.record("Decline")
                 context.dispose()

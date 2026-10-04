@@ -70,7 +70,7 @@ struct ProgressMessagesPage: View {
 
     private func presentLongMessage() {
         let log = log
-        let alert = AlertProgressIndicatorViewController(title: "Reading Terms", message: Self.longMessage)
+        let alert = AlertProgressIndicatorViewController(title: "Reading Terms", message: .init(Self.longMessage))
         AlertPresenter.present(alert)
         Task {
             try? await Task.sleep(for: .seconds(4))

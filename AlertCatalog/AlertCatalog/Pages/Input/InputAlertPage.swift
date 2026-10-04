@@ -50,7 +50,7 @@ struct InputAlertPage: View {
         let alert = AlertInputViewController(
             title: "Rename Document",
             message: "Enter a new name for the document.",
-            placeholder: placeholder,
+            placeholder: .init(placeholder),
             text: text,
         ) { text in
             confirm(text)

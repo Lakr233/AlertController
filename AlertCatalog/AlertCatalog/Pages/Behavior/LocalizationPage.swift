@@ -12,25 +12,22 @@ import SwiftUI
 
 struct LocalizationPage: View {
     private static let code = """
-    // String literals are String.LocalizationValue, looked up in the
-    // app's Localizable.xcstrings.
-    //
-    // An interpolated literal passed straight in picks the String
-    // overload, which bakes the number into the key. Type it as a
-    // LocalizationValue so the interpolation becomes a format argument
-    // and the key is "You have %lld unread messages."
-    let message: String.LocalizationValue = "You have \\(count) unread messages."
+    // Titles, messages and action titles are String.LocalizationValue,
+    // looked up in the app's Localizable.xcstrings. An interpolated
+    // literal becomes a format argument, so the key here is
+    // "You have %lld unread messages."
     let alert = AlertViewController(
         title: "Welcome Back",
-        message: message
+        message: "You have \\(count) unread messages."
     ) { context in
         context.addAction(title: "Later") { context.dispose() }
         context.addAction(title: "Read Now", attribute: .accent) { context.dispose() }
     }
 
-    // A plain String is looked up as a key too.
+    // A String made at run time is wrapped explicitly and looked up as a
+    // key; text with no translation shows as it is.
     let key: String = "Welcome Back"
-    AlertViewController(title: key, message: "") { _ in }
+    AlertViewController(title: .init(key), message: "") { _ in }
     """
 
     @State private var log = CatalogEventLog()
@@ -59,8 +56,8 @@ struct LocalizationPage: View {
             CatalogReadout("App language", value: languageDescription)
             CatalogStepper("Unread messages", value: $unreadCount, in: 0 ... 99)
             CatalogNote(
-                "An interpolated literal passed straight to an initializer picks the plain String overload, so its key has the number baked in and is never found. Type it as String.LocalizationValue first.",
-                systemImage: "exclamationmark.triangle"
+                "An interpolated literal becomes a format argument, so its translation is found whatever the count. A String made at run time is wrapped with .init(_:) and looked up as a key.",
+                systemImage: "info.circle"
             )
             CatalogNote(
                 "The catalog ships English and Simplified Chinese. Pick the app's language in Settings on iOS, or launch the Mac app with -AppleLanguages \"(zh-Hans)\", to see the translations.",
@@ -72,11 +69,9 @@ struct LocalizationPage: View {
     private func presentLocalized() {
         let log = log
         let count = unreadCount
-        // Typed explicitly: an interpolated literal would pick the String overload.
-        let message: String.LocalizationValue = "You have \(count) unread messages."
         let alert = AlertViewController(
             title: "Welcome Back",
-            message: message,
+            message: "You have \(count) unread messages.",
         ) { context in
             context.addAction(title: "Later") {
                 log.record("Later")
@@ -94,8 +89,8 @@ struct LocalizationPage: View {
         let log = log
         let title = "Welcome Back"
         let action = "Read Now"
-        let alert = AlertViewController(title: title, message: "") { context in
-            context.addAction(title: action) {
+        let alert = AlertViewController(title: .init(title), message: "") { context in
+            context.addAction(title: .init(action)) {
                 log.record("Plain String keys: \(action)")
                 context.dispose()
             }

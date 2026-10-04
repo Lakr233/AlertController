@@ -13,6 +13,7 @@ import Foundation
     import AppKit
 #endif
 
+@MainActor
 public enum AlertControllerConfiguration {
     public static var alertImage: PlatformImage?
     public static var accentColor: PlatformColor = .red

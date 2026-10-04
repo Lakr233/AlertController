@@ -76,7 +76,7 @@ struct AccentPromotionPage: View {
         ) { context in
             for (index, title) in titles.enumerated() {
                 let attribute: ActionContext.Action.Attribute = index == accentIndex ? .accent : .normal
-                context.addAction(title: title, attribute: attribute) {
+                context.addAction(title: .init(title), attribute: attribute) {
                     log.record(title)
                     context.dispose()
                 }

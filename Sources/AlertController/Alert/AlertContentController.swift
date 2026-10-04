@@ -28,15 +28,15 @@
         init(
             title: String = "",
             message: String = "",
-            context: ActionContext = .init(),
-            setupActions: @escaping (ActionContext) -> Void
+            context: ActionContext? = nil,
+            setupActions: @escaping @MainActor (ActionContext) -> Void
         ) {
-            self.context = context
+            self.context = context ?? ActionContext()
             messageTitle = title
             messageContent = message
             super.init(nibName: nil, bundle: nil)
 
-            setupActions(context)
+            setupActions(self.context)
         }
 
         @available(*, unavailable)
@@ -178,7 +178,7 @@
             for customView in customViews {
                 stackView.addArrangedSubview(customView)
                 customView.translatesAutoresizingMaskIntoConstraints = false
-                let inset: CGFloat = customView is HorizontalSeprator ? 0 : 16
+                let inset: CGFloat = customView is HorizontalSeparator ? 0 : 16
                 customView.leadingAnchor.constraint(equalTo: stackView.leadingAnchor, constant: inset).isActive = true
                 customView.trailingAnchor.constraint(
                     equalTo: stackView.trailingAnchor,

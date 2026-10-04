@@ -65,7 +65,7 @@ struct ManyActionsPage: View {
             message: "Choose how to share “Quarterly Report”.",
         ) { context in
             for title in titles {
-                context.addAction(title: title) {
+                context.addAction(title: .init(title)) {
                     log.record(title)
                     context.dispose()
                 }

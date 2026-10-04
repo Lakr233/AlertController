@@ -16,7 +16,7 @@ import Foundation
         init(
             title: String = "",
             message: String = "",
-            setupActions: @escaping (ActionContext) -> Void
+            setupActions: @escaping @MainActor (ActionContext) -> Void
         ) {
             super.init(
                 title: title,
@@ -25,7 +25,7 @@ import Foundation
                 setupActions: setupActions
             )
 
-            customViews.append(HorizontalSeprator())
+            customViews.append(HorizontalSeparator())
             customViews.append(ProgressIndicator())
         }
 

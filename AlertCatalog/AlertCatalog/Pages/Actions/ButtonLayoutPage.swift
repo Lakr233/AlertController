@@ -51,11 +51,11 @@ struct ButtonLayoutPage: View {
             title: "Unsaved Changes",
             message: "You have edits that are not saved yet.",
         ) { context in
-            context.addAction(title: first) {
+            context.addAction(title: .init(first)) {
                 log.record(first)
                 context.dispose()
             }
-            context.addAction(title: second, attribute: .accent) {
+            context.addAction(title: .init(second), attribute: .accent) {
                 log.record(second)
                 context.dispose()
             }
