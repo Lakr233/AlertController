@@ -158,6 +158,9 @@ open class AlertBaseController: AlertControllerObject {
 
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dimmingViewTapped))
         dimmingView.addGestureRecognizer(tapGesture)
+
+        view.accessibilityViewIsModal = true
+        dimmingView.accessibilityElementsHidden = true
     }
 
     @objc func contentBackgroundViewTapped() {}
@@ -271,6 +274,25 @@ open class AlertBaseController: AlertControllerObject {
         super.pressesBegan(presses, with: event)
     }
 
+    override open var canBecomeFirstResponder: Bool {
+        true
+    }
+
+    override open var keyCommands: [UIKeyCommand]? {
+        let escapeCommand = UIKeyCommand(
+            input: UIKeyCommand.inputEscape,
+            modifierFlags: [],
+            action: #selector(escapePressed)
+        )
+        escapeCommand.wantsPriorityOverSystemBehavior = true
+        return (super.keyCommands ?? []) + [escapeCommand]
+    }
+
+    override open func accessibilityPerformEscape() -> Bool {
+        escapePressed()
+        return shouldDismissWhenEscapeKeyPressed
+    }
+
     @objc open func escapePressed() {
         if shouldDismissWhenEscapeKeyPressed {
             presentingViewController?.dismiss(animated: true)
@@ -282,13 +304,15 @@ open class AlertBaseController: AlertControllerObject {
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        // resign from firstResponder to avoid escape key not working
-        if shouldDismissWhenEscapeKeyPressed,
-           let firstResponder = view.window?.firstResponder()
-        {
-            firstResponder.resignFirstResponder()
-            view.becomeFirstResponder()
+        // Join the responder chain so the Escape key command reaches the
+        // alert, unless a view inside the alert (e.g. a text field) already
+        // holds focus and forwards Escape itself.
+        let firstResponder = view.window?.firstResponder()
+        if firstResponder?.isDescendant(of: view) != true {
+            becomeFirstResponder()
         }
+
+        UIAccessibility.post(notification: .screenChanged, argument: contentView)
     }
 
     open func animationController(

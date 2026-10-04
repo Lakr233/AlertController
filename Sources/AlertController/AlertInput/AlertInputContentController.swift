@@ -21,9 +21,10 @@ class AlertInputContentController: AlertContentController {
         onSubmit: @escaping (ActionContext) -> Void
     ) {
         super.init(title: title, message: message, setupActions: setupActions)
-        context.userObject = originalText
+        let trimmedText = originalText.trimmingCharacters(in: .whitespacesAndNewlines)
+        context.userObject = trimmedText
         field.textField.placeholder = placeholder
-        field.textField.text = originalText.trimmingCharacters(in: .whitespacesAndNewlines)
+        field.textField.text = trimmedText
         field.textPublisher = { [weak self] text in
             self?.context.userObject = text
         }
@@ -57,7 +58,17 @@ private class UITextFieldWithoutEscapeToClear: UITextField {
         ]
     }
 
-    @objc func stub() {}
+    /// Forwards Escape to the hosting alert instead of clearing the text.
+    @objc func stub() {
+        var responder = next
+        while let current = responder {
+            if let alertController = current as? AlertBaseController {
+                alertController.escapePressed()
+                return
+            }
+            responder = current.next
+        }
+    }
 }
 
 class InputField: UIView, UITextFieldDelegate {
@@ -70,7 +81,7 @@ class InputField: UIView, UITextFieldDelegate {
     init() {
         super.init(frame: .zero)
         translatesAutoresizingMaskIntoConstraints = false
-        heightAnchor.constraint(equalToConstant: 32).isActive = true
+        heightAnchor.constraint(greaterThanOrEqualToConstant: 32).isActive = true
 
         backgroundColor = AlertControllerConfiguration.accentColor.withAlphaComponent(0.1)
         layer.cornerRadius = 8
@@ -78,6 +89,7 @@ class InputField: UIView, UITextFieldDelegate {
 
         textField.textColor = .label.withAlphaComponent(0.9)
         textField.font = .preferredFont(forTextStyle: .footnote)
+        textField.adjustsFontForContentSizeCategory = true
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.borderStyle = .none
         textField.autocapitalizationType = .none

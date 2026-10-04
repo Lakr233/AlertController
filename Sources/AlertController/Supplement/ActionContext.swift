@@ -21,17 +21,45 @@ open class ActionContext {
     /// `allowSimpleDispose()`.
     var simpleDisposeRequested = false
 
+    private var disposeRequested = false
+
     let spacing: CGFloat = 16
 
     init() {}
 
     func bind(to viewController: UIViewController) {
-        dismissHandler = { [weak viewController, self] completionBlock in
-            dismissHandler = nil
-            viewController?.dismiss(animated: true) {
+        dismissHandler = { [weak viewController, weak self] completionBlock in
+            guard let viewController, viewController.presentingViewController != nil else {
+                self?.dismissHandler = nil
+                completionBlock()
+                return
+            }
+            if let coordinator = viewController.transitionCoordinator {
+                // UIKit drops a dismiss requested while a transition is
+                // running, so retry once the current transition finishes.
+                coordinator.animate(alongsideTransition: nil) { _ in
+                    DispatchQueue.main.async {
+                        guard let handler = self?.dismissHandler else {
+                            completionBlock()
+                            return
+                        }
+                        handler(completionBlock)
+                    }
+                }
+                return
+            }
+            self?.dismissHandler = nil
+            viewController.dismiss(animated: true) {
                 completionBlock()
             }
         }
+    }
+
+    /// Releases the action blocks and the dismiss handler once the alert
+    /// is gone, breaking the cycles formed by blocks that capture the context.
+    func releaseAfterDismissal() {
+        actions.removeAll()
+        dismissHandler = nil
     }
 
     open func addAction(
@@ -40,7 +68,7 @@ open class ActionContext {
         block: @escaping () -> Void
     ) {
         actions.append(.init(
-            title: String(localized: title),
+            title: Self.localizedString(title),
             attribute: attribute,
             block: block
         ))
@@ -60,13 +88,34 @@ open class ActionContext {
     }
 
     open func dispose(_ completion: @escaping @MainActor () async -> Void = {}) {
+        guard !disposeRequested else { return }
+        disposeRequested = true
         let generator = UINotificationFeedbackGenerator()
         generator.notificationOccurred(.success)
-        dismissHandler? {
+        let completionBlock: DismissBlock = {
             Task { @MainActor in
                 await completion()
             }
         }
+        guard let dismissHandler else {
+            // Already dismissed (for example by tap-around or Escape).
+            completionBlock()
+            return
+        }
+        dismissHandler(completionBlock)
+    }
+
+    /// Resolves against the host app first, then falls back to the
+    /// package's own translations (e.g. the default "Cancel" / "Done").
+    static func localizedString(_ value: String.LocalizationValue) -> String {
+        let localized = String(localized: value)
+        let unlocalized = String(
+            localized: value,
+            table: "AlertControllerMissingTable",
+            bundle: .main
+        )
+        guard localized == unlocalized else { return localized }
+        return String(localized: value, bundle: AlertControllerConfiguration.module)
     }
 }
 

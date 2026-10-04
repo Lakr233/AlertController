@@ -64,4 +64,12 @@ open class AlertViewController: AlertBaseController {
         super.viewDidLoad()
         contentView.layer.cornerRadius = 20
     }
+
+    override open func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        guard isBeingDismissed,
+              let content = contentViewController as? AlertContentController
+        else { return }
+        content.context.releaseAfterDismissal()
+    }
 }

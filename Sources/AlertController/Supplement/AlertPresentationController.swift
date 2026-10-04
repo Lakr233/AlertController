@@ -14,6 +14,7 @@ public final class AlertPresentationController: UIPresentationController {
         alertController.contentView.alpha = 0
         alertController.contentView.transform = .init(scaleX: 1.1, y: 1.1)
         containerView?.addSubview(alertController.view)
+        containerView?.accessibilityViewIsModal = true
     }
 
     override public func presentationTransitionDidEnd(_ completed: Bool) {

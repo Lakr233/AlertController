@@ -33,6 +33,9 @@ class AlertProgressIndicatorContentController: AlertContentController {
         progressContext.contentController = self
         messageLabel?.numberOfLines = 0
         messageLabel?.lineBreakMode = .byWordWrapping
+        if let pendingMessage = progressContext.pendingMessage {
+            updateMessage(pendingMessage, animated: false)
+        }
     }
 }
 

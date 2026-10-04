@@ -14,6 +14,8 @@ class AlertContentController: UIViewController {
     let messageTitle: String
     let messageContent: String
     let stackView = UIStackView()
+    private let textScrollView = UIScrollView()
+    private let textStackView = UIStackView()
 
     let backgroundView = UIVisualEffectView(effect: UIBlurEffect(style: .systemMaterial))
     private var actionStackView: UIStackView?
@@ -46,6 +48,7 @@ class AlertContentController: UIViewController {
         guard animated, isViewLoaded, let messageLabel else {
             messageLabel?.text = message
             messageLabel?.isHidden = message.isEmpty
+            updateTextScrollViewVisibility()
             return
         }
 
@@ -57,6 +60,7 @@ class AlertContentController: UIViewController {
             ) {
                 messageLabel.text = message
                 messageLabel.isHidden = message.isEmpty
+                self.updateTextScrollViewVisibility()
             }
         }
 
@@ -117,34 +121,48 @@ class AlertContentController: UIViewController {
             stackView.addArrangedSubview(imageView)
         }
 
+        // Title and message scroll when they do not fit, so the actions
+        // below always stay visible.
+        textStackView.axis = .vertical
+        textStackView.spacing = context.spacing
+        textStackView.alignment = .fill
+        textStackView.translatesAutoresizingMaskIntoConstraints = false
+        textScrollView.translatesAutoresizingMaskIntoConstraints = false
+        textScrollView.showsHorizontalScrollIndicator = false
+        textScrollView.addSubview(textStackView)
+        stackView.addArrangedSubview(textScrollView)
+        let textScrollHeight = textScrollView.heightAnchor.constraint(equalTo: textStackView.heightAnchor)
+        textScrollHeight.priority = .defaultHigh - 1
+        textScrollView.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
+        NSLayoutConstraint.activate([
+            textScrollView.leadingAnchor.constraint(equalTo: stackView.leadingAnchor, constant: 16),
+            textScrollView.trailingAnchor.constraint(equalTo: stackView.trailingAnchor, constant: -16),
+            textStackView.topAnchor.constraint(equalTo: textScrollView.contentLayoutGuide.topAnchor),
+            textStackView.leadingAnchor.constraint(equalTo: textScrollView.contentLayoutGuide.leadingAnchor),
+            textStackView.trailingAnchor.constraint(equalTo: textScrollView.contentLayoutGuide.trailingAnchor),
+            textStackView.bottomAnchor.constraint(equalTo: textScrollView.contentLayoutGuide.bottomAnchor),
+            textStackView.widthAnchor.constraint(equalTo: textScrollView.frameLayoutGuide.widthAnchor),
+            textScrollHeight,
+        ])
+
         if !messageTitle.isEmpty {
             let titleLabel = UILabel()
             titleLabel.translatesAutoresizingMaskIntoConstraints = false
             titleLabel.text = messageTitle
-            titleLabel.font = .systemFont(
-                ofSize: UIFont.preferredFont(forTextStyle: .body).pointSize,
-                weight: .semibold
-            )
+            titleLabel.font = .scaledSystemFont(forTextStyle: .body, weight: .semibold)
+            titleLabel.adjustsFontForContentSizeCategory = true
             titleLabel.textColor = .label
             titleLabel.textAlignment = .center
             titleLabel.numberOfLines = 0
             titleLabel.setContentCompressionResistancePriority(.required, for: .vertical)
-            stackView.addArrangedSubview(titleLabel)
-            NSLayoutConstraint.activate([
-                titleLabel.leadingAnchor.constraint(equalTo: stackView.leadingAnchor, constant: 16),
-                titleLabel.trailingAnchor.constraint(equalTo: stackView.trailingAnchor, constant: -16),
-            ])
-            let heightConstraint = titleLabel.heightAnchor.constraint(lessThanOrEqualToConstant: 80)
-            heightConstraint.priority = .required
-            NSLayoutConstraint.activate([heightConstraint])
+            textStackView.addArrangedSubview(titleLabel)
         }
 
         let messageLabel = UILabel()
         messageLabel.translatesAutoresizingMaskIntoConstraints = false
         messageLabel.text = messageContent
-        messageLabel.font = .systemFont(
-            ofSize: UIFont.preferredFont(forTextStyle: .footnote).pointSize
-        )
+        messageLabel.font = .scaledSystemFont(forTextStyle: .footnote)
+        messageLabel.adjustsFontForContentSizeCategory = true
         messageLabel.textColor = .label
         messageLabel.textAlignment = .center
         messageLabel.numberOfLines = 0
@@ -152,14 +170,8 @@ class AlertContentController: UIViewController {
         messageLabel.setContentCompressionResistancePriority(.required, for: .vertical)
         messageLabel.isHidden = messageContent.isEmpty
         self.messageLabel = messageLabel
-        stackView.addArrangedSubview(messageLabel)
-        NSLayoutConstraint.activate([
-            messageLabel.leadingAnchor.constraint(equalTo: stackView.leadingAnchor, constant: 16),
-            messageLabel.trailingAnchor.constraint(equalTo: stackView.trailingAnchor, constant: -16),
-        ])
-        let heightConstraint = messageLabel.heightAnchor.constraint(lessThanOrEqualToConstant: 300)
-        heightConstraint.priority = .required
-        NSLayoutConstraint.activate([heightConstraint])
+        textStackView.addArrangedSubview(messageLabel)
+        updateTextScrollViewVisibility()
 
         for customView in customViews {
             stackView.addArrangedSubview(customView)
@@ -215,6 +227,20 @@ class AlertContentController: UIViewController {
         }
 
         updateButtonAxisIfNeeded()
+    }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        guard previousTraitCollection?.preferredContentSizeCategory
+            != traitCollection.preferredContentSizeCategory
+        else { return }
+        appliedActionAxis = nil
+        view.setNeedsLayout()
+    }
+
+    private func updateTextScrollViewVisibility() {
+        let hasVisibleText = textStackView.arrangedSubviews.contains { !$0.isHidden }
+        textScrollView.isHidden = !hasVisibleText
     }
 
     private func updateButtonAxisIfNeeded() {
