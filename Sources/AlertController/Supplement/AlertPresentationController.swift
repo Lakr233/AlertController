@@ -3,23 +3,25 @@
 //  Copyright (c) 2024 ktiays. All rights reserved.
 //
 
-import UIKit
+#if canImport(UIKit)
+    import UIKit
 
-public final class AlertPresentationController: UIPresentationController {
-    override public func presentationTransitionWillBegin() {
-        guard let alertController = presentedViewController as? AlertBaseController else {
-            return
+    public final class AlertPresentationController: UIPresentationController {
+        override public func presentationTransitionWillBegin() {
+            guard let alertController = presentedViewController as? AlertBaseController else {
+                return
+            }
+            alertController.dimmingView.alpha = 0
+            alertController.contentView.alpha = 0
+            alertController.contentView.transform = .init(scaleX: 1.1, y: 1.1)
+            containerView?.addSubview(alertController.view)
+            containerView?.accessibilityViewIsModal = true
         }
-        alertController.dimmingView.alpha = 0
-        alertController.contentView.alpha = 0
-        alertController.contentView.transform = .init(scaleX: 1.1, y: 1.1)
-        containerView?.addSubview(alertController.view)
-        containerView?.accessibilityViewIsModal = true
-    }
 
-    override public func presentationTransitionDidEnd(_ completed: Bool) {
-        if !completed {
-            presentedViewController.view.removeFromSuperview()
+        override public func presentationTransitionDidEnd(_ completed: Bool) {
+            if !completed {
+                presentedViewController.view.removeFromSuperview()
+            }
         }
     }
-}
+#endif

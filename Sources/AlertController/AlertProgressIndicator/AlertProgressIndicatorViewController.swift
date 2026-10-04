@@ -5,7 +5,7 @@
 //  Created by 秋星桥 on 1/30/25.
 //
 
-import UIKit
+import Foundation
 
 open class AlertProgressIndicatorViewController: AlertViewController {
     public var progressContext: ProgressContext {
@@ -37,7 +37,7 @@ open class AlertProgressIndicatorViewController: AlertViewController {
         )
     }
 
-    public required init(contentViewController: UIViewController) {
+    public required init(contentViewController: PlatformViewController) {
         super.init(contentViewController: contentViewController)
     }
 }

@@ -1,12 +1,14 @@
 //
-//  AlertProgressIndicatorContentController.swift
+//  AlertProgressIndicatorContentController@AppKit.swift
 //  AlertController
 //
-//  Created by 秋星桥 on 2/22/25.
-//
+
+import Foundation
 
 #if canImport(UIKit)
-    import UIKit
+// UIKit implementation lives in AlertProgressIndicatorContentController.swift.
+#elseif canImport(AppKit)
+    import AppKit
 
     class AlertProgressIndicatorContentController: AlertContentController {
         let progressContext = ProgressContext()
@@ -23,38 +25,37 @@
                 setupActions: setupActions
             )
 
-            let progressIndicatorView = ProgressIndicator()
             customViews.append(HorizontalSeprator())
-            customViews.append(progressIndicatorView)
+            customViews.append(ProgressIndicator())
         }
 
         override func viewDidLoad() {
             super.viewDidLoad()
             progressContext.contentController = self
-            messageLabel?.numberOfLines = 0
-            messageLabel?.lineBreakMode = .byWordWrapping
             if let pendingMessage = progressContext.pendingMessage {
                 updateMessage(pendingMessage, animated: false)
             }
         }
     }
 
-    class ProgressIndicator: UIView {
+    class ProgressIndicator: NSView {
+        private let indicator = NSProgressIndicator()
+
         init() {
             super.init(frame: .zero)
             translatesAutoresizingMaskIntoConstraints = false
-            let indicator = UIActivityIndicatorView()
-            indicator.style = .medium
+            indicator.style = .spinning
+            indicator.controlSize = .small
+            indicator.isIndeterminate = true
+            indicator.isDisplayedWhenStopped = false
             indicator.translatesAutoresizingMaskIntoConstraints = false
             addSubview(indicator)
             NSLayoutConstraint.activate([
-                indicator.topAnchor.constraint(equalTo: topAnchor),
-                indicator.leadingAnchor.constraint(equalTo: leadingAnchor),
-                indicator.trailingAnchor.constraint(equalTo: trailingAnchor),
-                indicator.bottomAnchor.constraint(equalTo: bottomAnchor),
+                indicator.topAnchor.constraint(equalTo: topAnchor, constant: 2),
+                indicator.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -2),
+                indicator.centerXAnchor.constraint(equalTo: centerXAnchor),
             ])
-
-            indicator.startAnimating()
+            indicator.startAnimation(nil)
         }
 
         @available(*, unavailable)

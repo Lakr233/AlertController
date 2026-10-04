@@ -1,13 +1,13 @@
 # AlertController
 
-A modern, customizable alert controller implementation for iOS and macCatalyst applications.
+A modern, customizable alert controller for iOS, Mac Catalyst and native macOS (AppKit) applications.
 
 ![Screenshot](Resources/screenshot.jpeg)
 
 ## Features
 
 - Custom styled alert views with clean UI
-- Support for iOS and macCatalyst platforms
+- Support for iOS, Mac Catalyst and native macOS (AppKit) with the same API
 - Multiple action buttons with customizable styles
 - Automatic promotion of the last action when no accent action is provided
 - Adaptive two-button layout that switches to vertical when titles wrap
@@ -89,6 +89,24 @@ Task { @MainActor in
 
 `progressContext.purpose(message:)` updates the message in place with animated text transitions and supports multiline content.
 
+### macOS (AppKit)
+
+The same types and initializers are available on native macOS. Alerts appear as a card over a dimmed backdrop inside the presenting window, so call sites read the same as on UIKit:
+
+```swift
+// In an NSViewController
+let alert = AlertViewController(title: "Hello World", message: "This is a sample alert message") { context in
+    context.addAction(title: "Cancel") { context.dispose() }
+    context.addAction(title: "Confirm", attribute: .accent) { context.dispose() }
+}
+present(alert, animated: true)
+// later: alert.dismiss(animated: true)
+```
+
+Return triggers the accent action, and Escape dismisses the alert when `allowSimpleDispose()` was called, the same as on UIKit. The alert respects Reduce Motion. To drive the presentation yourself, use `present(alert, animator: AlertPresentationAnimator())`.
+
+These types are UIKit only: `AlertPresentationController` and `AlertTransitionAnimator`. On macOS, `AlertPresentationAnimator` takes their place.
+
 ## Customization
 
 You can customize the appearance of alerts using the `AlertControllerConfiguration`:
@@ -98,21 +116,25 @@ You can customize the appearance of alerts using the `AlertControllerConfigurati
 AlertControllerConfiguration.accentColor = .systemBlue
 
 // Set custom image to display at the top of alerts
-AlertControllerConfiguration.alertImage = UIImage(named: "YourImage")
+AlertControllerConfiguration.alertImage = UIImage(named: "YourImage") // NSImage on macOS
 ```
+
+`AlertControllerConfiguration` uses the `PlatformColor` and `PlatformImage` type aliases, which are `UIColor` / `UIImage` on UIKit and `NSColor` / `NSImage` on AppKit.
 
 ## Build
 
 Verified build entry points:
 
 - `xcodebuild -scheme AlertController -destination 'generic/platform=iOS Simulator' build`
-- `xcodebuild -scheme AlertController -destination 'platform=macOS,variant=Mac Catalyst' build`
+- `xcodebuild -scheme AlertController -destination 'generic/platform=macOS,variant=Mac Catalyst' build`
+- `xcodebuild -scheme AlertController -destination 'generic/platform=macOS' build`
+- `swift build`
 - `xcodebuild -workspace Example/AlertExample.xcworkspace -scheme AlertExample -destination 'generic/platform=iOS Simulator' build`
 - `xcodebuild -workspace Example/AlertExample.xcworkspace -scheme AlertExample -destination 'platform=macOS,variant=Mac Catalyst' build`
 
 ## Requirements
 
-- iOS 15.0+ / macCatalyst 15.0+
+- iOS 15.0+ / Mac Catalyst 15.0+ / macOS 12.0+
 - Swift 5.9+
 
 ## License

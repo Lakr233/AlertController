@@ -1,11 +1,11 @@
 //
-//  AlertViewController 2.swift
+//  AlertInputViewController.swift
 //  AlertController
 //
 //  Created by 秋星桥 on 1/30/25.
 //
 
-import UIKit
+import Foundation
 
 open class AlertInputViewController: AlertViewController {
     public convenience init(
@@ -62,7 +62,7 @@ open class AlertInputViewController: AlertViewController {
         )
     }
 
-    public required init(contentViewController: UIViewController) {
+    public required init(contentViewController: PlatformViewController) {
         super.init(contentViewController: contentViewController)
     }
 }

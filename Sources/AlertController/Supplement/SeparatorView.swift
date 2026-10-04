@@ -5,17 +5,19 @@
 //  Created by 秋星桥 on 2/22/25.
 //
 
-import UIKit
+#if canImport(UIKit)
+    import UIKit
 
-class HorizontalSeprator: UIView {
-    init() {
-        super.init(frame: .zero)
-        backgroundColor = AlertControllerConfiguration.separatorColor
-        heightAnchor.constraint(equalToConstant: 1).isActive = true
-    }
+    class HorizontalSeprator: UIView {
+        init() {
+            super.init(frame: .zero)
+            backgroundColor = AlertControllerConfiguration.separatorColor
+            heightAnchor.constraint(equalToConstant: 1).isActive = true
+        }
 
-    @available(*, unavailable)
-    required init?(coder _: NSCoder) {
-        fatalError()
+        @available(*, unavailable)
+        required init?(coder _: NSCoder) {
+            fatalError()
+        }
     }
-}
+#endif

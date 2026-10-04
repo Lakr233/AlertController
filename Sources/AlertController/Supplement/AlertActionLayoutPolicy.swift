@@ -5,7 +5,13 @@
 //  Created by 秋星桥 on 4/10/26.
 //
 
-import UIKit
+import Foundation
+
+#if canImport(UIKit)
+    import UIKit
+#elseif canImport(AppKit)
+    import AppKit
+#endif
 
 struct PresentedAlertAction {
     let action: ActionContext.Action
@@ -14,7 +20,7 @@ struct PresentedAlertAction {
 
 enum AlertActionLayoutPolicy {
     static let actionSpacing: CGFloat = 8
-    static let buttonContentInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+    static let buttonContentInsets = PlatformEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
 
     static func makePresentations(from actions: [ActionContext.Action]) -> [PresentedAlertAction] {
         let containsAccentAction = actions.contains { $0.attribute == .accent }
@@ -30,7 +36,7 @@ enum AlertActionLayoutPolicy {
     static func preferredAxis(
         for actions: [PresentedAlertAction],
         availableWidth: CGFloat
-    ) -> NSLayoutConstraint.Axis {
+    ) -> PlatformLayoutAxis {
         guard actions.count == 2 else {
             return .vertical
         }
@@ -48,9 +54,22 @@ enum AlertActionLayoutPolicy {
                 attributes: [.font: action.effectiveAttribute.font],
                 context: nil
             ).height
-            return ceil(textHeight) > ceil(action.effectiveAttribute.font.lineHeight)
+            return ceil(textHeight) > ceil(action.effectiveAttribute.font.alertLineHeight)
         }
 
         return needsWrappedButton ? .vertical : .horizontal
     }
+}
+
+private extension PlatformFont {
+    #if canImport(UIKit)
+        var alertLineHeight: CGFloat {
+            lineHeight
+        }
+    #elseif canImport(AppKit)
+        /// Matches the line height the text system uses when measuring.
+        var alertLineHeight: CGFloat {
+            NSLayoutManager().defaultLineHeight(for: self)
+        }
+    #endif
 }
