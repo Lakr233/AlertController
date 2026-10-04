@@ -1,0 +1,47 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: macos-26
+    strategy:
+      fail-fast: false
+      matrix:
+        scheme: [AlertController, AlertCatalog]
+        destination:
+          - platform=macOS
+          - "platform=macOS,variant=Mac Catalyst"
+          - platform=iOS Simulator
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install xcbeautify
+        run: brew install xcbeautify
+
+      - name: Build
+        run: |
+          set -o pipefail
+          xcodebuild -scheme "${{ matrix.scheme }}" \
+            -workspace AlertCatalog.xcworkspace \
+            -destination "generic/${{ matrix.destination }}" \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            | xcbeautify --disable-logging
+
+  swiftpm:
+    runs-on: macos-26
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build
+        run: swift build

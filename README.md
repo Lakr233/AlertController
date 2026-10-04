@@ -121,16 +121,28 @@ AlertControllerConfiguration.alertImage = UIImage(named: "YourImage") // NSImage
 
 `AlertControllerConfiguration` uses the `PlatformColor` and `PlatformImage` type aliases, which are `UIColor` / `UIImage` on UIKit and `NSColor` / `NSImage` on AppKit.
 
+## Catalog
+
+`AlertCatalog.xcworkspace` opens the package together with AlertCatalog, a SwiftUI app that runs on iOS, iPadOS, Mac Catalyst and native macOS from one target. Each page explains one feature and has buttons that present real alerts: action layouts, accent promotion, dispose completions, input and progress alerts, live configuration, dismissal options and localization.
+
+Open a page directly with `-page <id>` (for example `-page progress.updates`); add `-autoPresent YES` to present its first alert at launch.
+
 ## Build
 
-Verified build entry points:
+Open `AlertCatalog.xcworkspace` and run the `AlertCatalog` scheme, or build from the command line:
 
-- `xcodebuild -scheme AlertController -destination 'generic/platform=iOS Simulator' build`
-- `xcodebuild -scheme AlertController -destination 'generic/platform=macOS,variant=Mac Catalyst' build`
-- `xcodebuild -scheme AlertController -destination 'generic/platform=macOS' build`
-- `swift build`
-- `xcodebuild -workspace Example/AlertExample.xcworkspace -scheme AlertExample -destination 'generic/platform=iOS Simulator' build`
-- `xcodebuild -workspace Example/AlertExample.xcworkspace -scheme AlertExample -destination 'platform=macOS,variant=Mac Catalyst' build`
+```sh
+# The package
+xcodebuild -workspace AlertCatalog.xcworkspace -scheme AlertController -destination 'generic/platform=iOS Simulator' build
+swift build
+
+# The catalog, for each platform
+xcodebuild -workspace AlertCatalog.xcworkspace -scheme AlertCatalog -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build
+xcodebuild -workspace AlertCatalog.xcworkspace -scheme AlertCatalog -destination 'generic/platform=macOS,variant=Mac Catalyst' CODE_SIGNING_ALLOWED=NO build
+xcodebuild -workspace AlertCatalog.xcworkspace -scheme AlertCatalog -destination 'generic/platform=macOS' CODE_SIGNING_ALLOWED=NO build
+```
+
+The catalog needs iOS 17 or macOS 14; the package itself supports the versions below.
 
 ## Requirements
 
