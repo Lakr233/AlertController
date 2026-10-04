@@ -36,7 +36,16 @@ import Foundation
                 containerView.addSubview(viewController.view)
                 return
             }
-            alertController.attachOverlay(to: containerView)
+            // A SwiftUI window's content view is a hosting view whose hit
+            // testing skips foreign subviews, so the overlay goes into the
+            // window's frame view, right above the content view.
+            if let contentView = fromViewController.view.window?.contentView,
+               let frameView = contentView.superview
+            {
+                alertController.attachOverlay(to: frameView, above: contentView)
+            } else {
+                alertController.attachOverlay(to: containerView)
+            }
             alertController.runPresentationAnimation(animated: animatesPresentation)
         }
 

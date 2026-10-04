@@ -89,7 +89,9 @@ import Foundation
         }
 
         override open func loadView() {
-            view = AlertOverlayView(frame: NSRect(x: 0, y: 0, width: 480, height: 320))
+            let overlayView = AlertOverlayView(frame: NSRect(x: 0, y: 0, width: 480, height: 320))
+            overlayView.owner = self
+            view = overlayView
         }
 
         override open func viewDidLoad() {
@@ -281,13 +283,15 @@ import Foundation
 
         // MARK: Presentation (driven by AlertPresentationAnimator)
 
-        func attachOverlay(to containerView: NSView) {
+        /// Adds the overlay to `containerView`, covering `sibling` and stacked
+        /// right above it, or covering all of `containerView` without one.
+        func attachOverlay(to containerView: NSView, above sibling: NSView? = nil) {
             let window = containerView.window
             previousFirstResponder = Self.restorableResponder(window?.firstResponder)
 
-            view.frame = containerView.bounds
+            view.frame = sibling?.frame ?? containerView.bounds
             view.autoresizingMask = [.width, .height]
-            containerView.addSubview(view, positioned: .above, relativeTo: nil)
+            containerView.addSubview(view, positioned: .above, relativeTo: sibling)
             isAttached = true
             // Wrapping labels settle their width on the first pass and their
             // height on the second.
@@ -305,10 +309,40 @@ import Foundation
             view.removeFromSuperview()
             isAttached = false
             guard let window else { return }
-            if let previousFirstResponder, Self.isResponder(previousFirstResponder, in: window) {
-                window.makeFirstResponder(previousFirstResponder)
+            restorePreviousFirstResponder(in: window)
+        }
+
+        /// Hands focus back to what had it before the alert, unless focus has
+        /// already moved elsewhere, such as to a newer alert.
+        private func restorePreviousFirstResponder(in window: NSWindow) {
+            defer { previousFirstResponder = nil }
+            guard let previousFirstResponder,
+                  Self.isResponder(previousFirstResponder, in: window)
+            else { return }
+            if let current = window.firstResponder, current !== window {
+                guard let currentView = current as? NSView else { return }
+                guard currentView.isDescendant(of: view) else {
+                    handOverPreviousFirstResponder(to: currentView, previousFirstResponder)
+                    return
+                }
             }
-            previousFirstResponder = nil
+            window.makeFirstResponder(previousFirstResponder)
+        }
+
+        /// A newer alert that took focus from this one restores this
+        /// alert's previous responder when it closes instead.
+        private func handOverPreviousFirstResponder(to focusedView: NSView, _ responder: NSResponder) {
+            var candidate: NSView? = focusedView
+            while let current = candidate, !(current is AlertOverlayView) {
+                candidate = current.superview
+            }
+            guard let newerAlert = (candidate as? AlertOverlayView)?.owner, newerAlert !== self else { return }
+            if let inherited = newerAlert.previousFirstResponder as? NSView,
+               !inherited.isDescendant(of: view)
+            {
+                return
+            }
+            newerAlert.previousFirstResponder = responder
         }
 
         func runPresentationAnimation(animated: Bool) {
@@ -364,10 +398,8 @@ import Foundation
             transitionState = .dismissing
             // Hand the keyboard back right away instead of after the fade.
             removeKeyEventMonitor()
-            if let window = view.window, let previousFirstResponder,
-               Self.isResponder(previousFirstResponder, in: window)
-            {
-                window.makeFirstResponder(previousFirstResponder)
+            if let window = view.window {
+                restorePreviousFirstResponder(in: window)
             }
 
             guard animated, let dimmingLayer = dimmingView.layer, let contentLayer = contentView.layer else {
@@ -519,6 +551,8 @@ import Foundation
     /// Root view of an alert: covers the window content and keeps the
     /// pointer from reaching the views behind it.
     final class AlertOverlayView: NSView {
+        weak var owner: AlertBaseController?
+
         override var acceptsFirstResponder: Bool {
             true
         }

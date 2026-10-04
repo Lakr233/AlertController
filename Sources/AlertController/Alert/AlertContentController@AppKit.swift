@@ -26,7 +26,7 @@ import Foundation
         private let textStackView = NSStackView()
 
         let backgroundView = AlertColorView(
-            fillColor: AlertControllerConfiguration.backgroundColor.withAlphaComponent(0.5)
+            fillColor: AlertControllerConfiguration.backgroundColor.alertAlpha(0.5)
         )
         private var actionPresentations = [PresentedAlertAction]()
         private(set) var actionButtons = [AlertButton]()

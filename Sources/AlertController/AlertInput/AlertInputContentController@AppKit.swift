@@ -86,7 +86,7 @@ import Foundation
         let quickOptionButton = NSButton()
 
         init() {
-            super.init(fillColor: AlertControllerConfiguration.accentColor.withAlphaComponent(0.1))
+            super.init(fillColor: AlertControllerConfiguration.accentColor.alertAlpha(0.1))
             translatesAutoresizingMaskIntoConstraints = false
             cornerRadius = 8
             heightAnchor.constraint(greaterThanOrEqualToConstant: 32).isActive = true
@@ -98,7 +98,7 @@ import Foundation
             textField.focusRingType = .none
             textField.isEditable = true
             textField.isSelectable = true
-            textField.textColor = NSColor.labelColor.withAlphaComponent(0.9)
+            textField.textColor = NSColor.labelColor.alertAlpha(0.9)
             textField.font = .alertSystemFont(forTextStyle: .body)
             textField.usesSingleLineMode = true
             textField.lineBreakMode = .byTruncatingTail

@@ -57,4 +57,18 @@ import Foundation
             layer.cornerCurve = .continuous
         }
     }
+
+    extension NSColor {
+        /// Like `withAlphaComponent(_:)`, but keeps resolving the receiver
+        /// per appearance instead of freezing it to the current one.
+        func alertAlpha(_ alpha: CGFloat) -> NSColor {
+            NSColor(name: nil) { [self] appearance in
+                var resolved = self
+                appearance.performAsCurrentDrawingAppearance {
+                    resolved = self.usingColorSpace(.extendedSRGB) ?? self
+                }
+                return resolved.withAlphaComponent(alpha)
+            }
+        }
+    }
 #endif
