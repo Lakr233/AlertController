@@ -15,6 +15,8 @@ import Foundation
         /// first layout pass measures the real width.
         static let preferredWidth: CGFloat = 350
         static let horizontalInset: CGFloat = 16
+        static let preferredContentWidth = preferredWidth - horizontalInset * 2
+        static let spacing: CGFloat = 16
 
         let context: ActionContext
         private(set) var messageLabel: NSTextField?
@@ -44,7 +46,6 @@ import Foundation
             messageContent = message
             super.init(nibName: nil, bundle: nil)
 
-            context.bind(to: self)
             setupActions(context)
         }
 
@@ -108,17 +109,17 @@ import Foundation
 
             view.addSubview(stackView)
             stackView.orientation = .vertical
-            stackView.spacing = context.spacing
+            stackView.spacing = Self.spacing
             stackView.distribution = .fill
             stackView.alignment = .centerX
             stackView.detachesHiddenViews = true
             stackView.setHuggingPriority(AlertLayoutPriority.horizontalFit, for: .horizontal)
             stackView.translatesAutoresizingMaskIntoConstraints = false
             NSLayoutConstraint.activate([
-                stackView.topAnchor.constraint(equalTo: view.topAnchor, constant: context.spacing),
+                stackView.topAnchor.constraint(equalTo: view.topAnchor, constant: Self.spacing),
                 stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                 stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-                stackView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -context.spacing),
+                stackView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -Self.spacing),
             ])
 
             if let image = AlertControllerConfiguration.alertImage {
@@ -147,7 +148,7 @@ import Foundation
         override func viewDidLayout() {
             super.viewDidLayout()
 
-            let width = max(stackView.bounds.width - Self.horizontalInset * 2, 0)
+            let width = contentWidth
             for label in textStackView.arrangedSubviews.compactMap({ $0 as? NSTextField }) {
                 guard width > 0, label.preferredMaxLayoutWidth != width else { continue }
                 label.preferredMaxLayoutWidth = width
@@ -170,10 +171,10 @@ import Foundation
         /// Title and message scroll when they do not fit, so the actions
         /// below always stay visible.
         private func setupTextViews() {
-            let labelWidth = Self.preferredWidth - Self.horizontalInset * 2
+            let labelWidth = Self.preferredContentWidth
 
             textStackView.orientation = .vertical
-            textStackView.spacing = context.spacing
+            textStackView.spacing = Self.spacing
             textStackView.alignment = .centerX
             textStackView.distribution = .fill
             textStackView.detachesHiddenViews = true
@@ -299,16 +300,19 @@ import Foundation
                 second.trailingAnchor.constraint(equalTo: container.trailingAnchor),
                 second.bottomAnchor.constraint(equalTo: container.bottomAnchor),
             ]
-            let availableWidth = Self.preferredWidth - Self.horizontalInset * 2
             applyActionAxis(AlertActionLayoutPolicy.preferredAxis(
                 for: actionPresentations,
-                availableWidth: availableWidth
+                availableWidth: Self.preferredContentWidth
             ))
+        }
+
+        private var contentWidth: CGFloat {
+            max(stackView.bounds.width - Self.horizontalInset * 2, 0)
         }
 
         private func updateButtonAxisIfNeeded() {
             guard actionPresentations.count == 2 else { return }
-            let availableWidth = max(stackView.bounds.width - Self.horizontalInset * 2, 0)
+            let availableWidth = contentWidth
             guard availableWidth > 0 else { return }
             applyActionAxis(AlertActionLayoutPolicy.preferredAxis(
                 for: actionPresentations,

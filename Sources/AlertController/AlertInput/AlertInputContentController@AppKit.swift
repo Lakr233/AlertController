@@ -13,7 +13,7 @@ import Foundation
     class AlertInputContentController: AlertContentController {
         let field = InputField()
 
-        private var submitAction: (ActionContext) -> Void = { _ in }
+        private let submitAction: (ActionContext) -> Void
 
         init(
             title: String = "",
@@ -23,6 +23,7 @@ import Foundation
             setupActions: @escaping (ActionContext) -> Void,
             onSubmit: @escaping (ActionContext) -> Void
         ) {
+            self.submitAction = onSubmit
             super.init(title: title, message: message, setupActions: setupActions)
             let trimmedText = originalText.trimmingCharacters(in: .whitespacesAndNewlines)
             context.userObject = trimmedText
@@ -36,7 +37,6 @@ import Foundation
                 self?.callSubmit()
             }
             customViews.append(field)
-            submitAction = onSubmit
         }
 
         override var initialFirstResponder: NSView? {
@@ -49,7 +49,6 @@ import Foundation
 
         private func callSubmit() {
             submitAction(context)
-            submitAction = { _ in }
         }
     }
 

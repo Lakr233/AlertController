@@ -122,7 +122,7 @@ private extension AlertAppearance {
 /// Draws an SF Symbol on a colored tile and returns it as a `UIImage` or an
 /// `NSImage`, the type `AlertControllerConfiguration.alertImage` takes.
 enum AlertSymbolImage {
-    static let size: CGFloat = 64
+    private static let size: CGFloat = 64
 
     static func render(_ systemName: String, background: Color, foreground: Color) -> PlatformImage? {
         let tile = ZStack {

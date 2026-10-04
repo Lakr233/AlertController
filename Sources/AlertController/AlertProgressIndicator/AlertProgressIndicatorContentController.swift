@@ -23,16 +23,13 @@
                 setupActions: setupActions
             )
 
-            let progressIndicatorView = ProgressIndicator()
             customViews.append(HorizontalSeprator())
-            customViews.append(progressIndicatorView)
+            customViews.append(ProgressIndicator())
         }
 
         override func viewDidLoad() {
             super.viewDidLoad()
             progressContext.contentController = self
-            messageLabel?.numberOfLines = 0
-            messageLabel?.lineBreakMode = .byWordWrapping
             if let pendingMessage = progressContext.pendingMessage {
                 updateMessage(pendingMessage, animated: false)
             }

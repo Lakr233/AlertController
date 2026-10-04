@@ -41,7 +41,7 @@ nonisolated enum CatalogGroup: String, CaseIterable, Identifiable, Sendable {
 
 /// One page of the catalog. The raw value is the identifier `-page <id>` takes on the
 /// command line, and the cases are listed in sidebar order.
-nonisolated enum CatalogPageID: String, CaseIterable, Identifiable, Hashable, Sendable {
+nonisolated enum CatalogPageID: String, CaseIterable, Identifiable, Sendable {
     // MARK: Basics
 
     case basicAlert = "basics.alert"

@@ -21,15 +21,10 @@ import Foundation
                 preferredHeight: nil
             )
 
-            var enableEscapeDismiss = false
-
             if let content = contentViewController as? AlertContentController {
                 content.context.bind(to: self)
-                enableEscapeDismiss = content.context.simpleDisposeRequested
+                shouldDismissWhenEscapeKeyPressed = content.context.simpleDisposeRequested
             }
-
-            shouldDismissWhenTappedAround = false
-            shouldDismissWhenEscapeKeyPressed = enableEscapeDismiss
         }
 
         @available(*, unavailable)

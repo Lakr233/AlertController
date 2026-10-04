@@ -164,8 +164,6 @@
             dimmingView.accessibilityElementsHidden = true
         }
 
-        @objc func contentBackgroundViewTapped() {}
-
         open func contentViewDidLoad() {}
 
         override open func viewWillLayoutSubviews() {
@@ -196,8 +194,7 @@
 
         @objc func keyboardWillShow(_ notification: Notification) {
             let keyboardRect = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect
-            let keyboardHeightValue = keyboardRect?.height ?? 0
-            let keyboardHeight = keyboardHeightValue > 0 ? keyboardHeightValue : 0
+            let keyboardHeight = keyboardRect?.height ?? 0
             let animation = notification.userInfo?[UIResponder.keyboardAnimationCurveUserInfoKey] as? UInt
             let animationDuration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval
             UIView.animate(
@@ -239,10 +236,7 @@
         }
 
         func animateContentSizeChange(_ updates: @escaping () -> Void) {
-            guard let layoutContainerView = view.superview ?? view else {
-                updates()
-                return
-            }
+            let layoutContainerView: UIView = view.superview ?? view
             layoutContainerView.layoutIfNeeded()
             contentView.transform = CGAffineTransform(scaleX: 1, y: 0.992)
             UIView.springAnimate(

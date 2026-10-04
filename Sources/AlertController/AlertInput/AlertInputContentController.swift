@@ -11,7 +11,7 @@
     class AlertInputContentController: AlertContentController {
         let field = InputField()
 
-        private var submitAction: (ActionContext) -> Void = { _ in }
+        private let submitAction: (ActionContext) -> Void
 
         init(
             title: String = "",
@@ -21,6 +21,7 @@
             setupActions: @escaping (ActionContext) -> Void,
             onSubmit: @escaping (ActionContext) -> Void
         ) {
+            self.submitAction = onSubmit
             super.init(title: title, message: message, setupActions: setupActions)
             let trimmedText = originalText.trimmingCharacters(in: .whitespacesAndNewlines)
             context.userObject = trimmedText
@@ -33,7 +34,6 @@
                 self?.callSubmit()
             }
             customViews.append(field)
-            submitAction = onSubmit
         }
 
         override func viewDidAppear(_ animated: Bool) {
@@ -44,7 +44,6 @@
 
         private func callSubmit() {
             submitAction(context)
-            submitAction = { _ in }
         }
     }
 
@@ -129,7 +128,7 @@
         }
 
         func updateQuickOptionImage() {
-            if (textField.text ?? "").isEmpty == true {
+            if (textField.text ?? "").isEmpty {
                 quickOptionButton.setImage(UIImage(systemName: "doc.on.clipboard"), for: .normal)
             } else {
                 quickOptionButton.setImage(UIImage(systemName: "xmark.circle.fill"), for: .normal)
@@ -137,21 +136,12 @@
         }
 
         @objc func tappedOptionButton() {
-            if (textField.text ?? "").isEmpty == true {
-                textField.text = UIPasteboard.general.string
-                valueChanged()
-            } else {
-                textField.text = ""
-                valueChanged()
-            }
+            textField.text = (textField.text ?? "").isEmpty ? UIPasteboard.general.string : ""
+            valueChanged()
         }
 
         @objc func valueChanged() {
             updateQuickOptionImage()
-            collectValue()
-        }
-
-        @objc func collectValue() {
             textPublisher(textField.text ?? "")
         }
 

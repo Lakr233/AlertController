@@ -9,6 +9,8 @@
     import UIKit
 
     class AlertContentController: UIViewController {
+        static let spacing: CGFloat = 16
+
         let context: ActionContext
         private(set) var messageLabel: UILabel?
 
@@ -34,7 +36,6 @@
             messageContent = message
             super.init(nibName: nil, bundle: nil)
 
-            context.bind(to: self)
             setupActions(context)
         }
 
@@ -97,16 +98,16 @@
 
             view.addSubview(stackView)
             stackView.axis = .vertical
-            stackView.spacing = context.spacing
+            stackView.spacing = Self.spacing
             stackView.distribution = .fill
             stackView.alignment = .center
             stackView.translatesAutoresizingMaskIntoConstraints = false
 
             NSLayoutConstraint.activate([
-                stackView.topAnchor.constraint(equalTo: view.topAnchor, constant: context.spacing),
+                stackView.topAnchor.constraint(equalTo: view.topAnchor, constant: Self.spacing),
                 stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
                 stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
-                stackView.bottomAnchor.constraint(lessThanOrEqualTo: view.bottomAnchor, constant: -context.spacing),
+                stackView.bottomAnchor.constraint(lessThanOrEqualTo: view.bottomAnchor, constant: -Self.spacing),
             ])
 
             if let image = AlertControllerConfiguration.alertImage {
@@ -125,7 +126,7 @@
             // Title and message scroll when they do not fit, so the actions
             // below always stay visible.
             textStackView.axis = .vertical
-            textStackView.spacing = context.spacing
+            textStackView.spacing = Self.spacing
             textStackView.alignment = .fill
             textStackView.translatesAutoresizingMaskIntoConstraints = false
             textScrollView.translatesAutoresizingMaskIntoConstraints = false
@@ -177,51 +178,42 @@
             for customView in customViews {
                 stackView.addArrangedSubview(customView)
                 customView.translatesAutoresizingMaskIntoConstraints = false
-                var spacing: CGFloat = 16
-                if customView is HorizontalSeprator {
-                    spacing = 0
-                }
-                customView.leadingAnchor.constraint(equalTo: stackView.leadingAnchor, constant: spacing).isActive = true
-                customView.trailingAnchor.constraint(equalTo: stackView.trailingAnchor, constant: -spacing).isActive = true
+                let inset: CGFloat = customView is HorizontalSeprator ? 0 : 16
+                customView.leadingAnchor.constraint(equalTo: stackView.leadingAnchor, constant: inset).isActive = true
+                customView.trailingAnchor.constraint(equalTo: stackView.trailingAnchor, constant: -inset).isActive = true
             }
 
-            let actions = context.actions
-            actionPresentations = AlertActionLayoutPolicy.makePresentations(from: actions)
+            actionPresentations = AlertActionLayoutPolicy.makePresentations(from: context.actions)
+            let buttons = actionPresentations.map { presentation in
+                AlertButton(action: presentation.action, attribute: presentation.effectiveAttribute)
+            }
 
-            switch actions.count {
-            case 2:
-                let actionStackView = UIStackView()
-                actionStackView.spacing = AlertActionLayoutPolicy.actionSpacing
-                actionStackView.translatesAutoresizingMaskIntoConstraints = false
-                stackView.addArrangedSubview(actionStackView)
-                actionStackView.leadingAnchor.constraint(equalTo: stackView.leadingAnchor, constant: 16).isActive = true
-                actionStackView.trailingAnchor.constraint(equalTo: stackView.trailingAnchor, constant: -16).isActive = true
-                for action in actionPresentations {
-                    let button = AlertButton(
-                        action: action.action,
-                        attribute: action.effectiveAttribute
-                    )
-                    actionStackView.addArrangedSubview(button)
-                }
-                self.actionStackView = actionStackView
-            default:
-                for action in actionPresentations {
-                    let button = AlertButton(
-                        action: action.action,
-                        attribute: action.effectiveAttribute
-                    )
+            guard buttons.count == 2 else {
+                for button in buttons {
                     stackView.addArrangedSubview(button)
                     button.leadingAnchor.constraint(equalTo: stackView.leadingAnchor, constant: 16).isActive = true
                     button.trailingAnchor.constraint(equalTo: stackView.trailingAnchor, constant: -16).isActive = true
                 }
+                return
             }
+
+            let actionStackView = UIStackView()
+            actionStackView.spacing = AlertActionLayoutPolicy.actionSpacing
+            actionStackView.translatesAutoresizingMaskIntoConstraints = false
+            stackView.addArrangedSubview(actionStackView)
+            actionStackView.leadingAnchor.constraint(equalTo: stackView.leadingAnchor, constant: 16).isActive = true
+            actionStackView.trailingAnchor.constraint(equalTo: stackView.trailingAnchor, constant: -16).isActive = true
+            for button in buttons {
+                actionStackView.addArrangedSubview(button)
+            }
+            self.actionStackView = actionStackView
         }
 
         override func viewDidLayoutSubviews() {
             super.viewDidLayoutSubviews()
 
             if let messageLabel {
-                let width = max(stackView.bounds.width - 32, 0)
+                let width = contentWidth
                 if width > 0, messageLabel.preferredMaxLayoutWidth != width {
                     messageLabel.preferredMaxLayoutWidth = width
                 }
@@ -239,20 +231,23 @@
             view.setNeedsLayout()
         }
 
+        private var contentWidth: CGFloat {
+            max(stackView.bounds.width - 32, 0)
+        }
+
         private func updateTextScrollViewVisibility() {
             let hasVisibleText = textStackView.arrangedSubviews.contains { !$0.isHidden }
             textScrollView.isHidden = !hasVisibleText
         }
 
         private func updateButtonAxisIfNeeded() {
-            guard let actionStackView, actionPresentations.count == 2 else {
+            guard let actionStackView else {
                 return
             }
 
-            let availableWidth = max(stackView.bounds.width - 32, 0)
             let axis = AlertActionLayoutPolicy.preferredAxis(
                 for: actionPresentations,
-                availableWidth: availableWidth
+                availableWidth: contentWidth
             )
             guard appliedActionAxis != axis else {
                 return

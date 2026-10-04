@@ -20,7 +20,7 @@ struct CatalogDemo: Identifiable {
         title
     }
 
-    init(_ title: String, systemImage: String = "rectangle.on.rectangle", action: @escaping () -> Void) {
+    init(_ title: String, systemImage: String, action: @escaping () -> Void) {
         self.title = title
         self.systemImage = systemImage
         self.action = action
@@ -31,7 +31,7 @@ struct CatalogDemo: Identifiable {
 ///
 /// ```swift
 /// CatalogPageScaffold(.basicAlert, code: Self.code, log: log, demos: [
-///     CatalogDemo("Present Alert") { presentAlert() },
+///     CatalogDemo("Present Alert", systemImage: "exclamationmark.bubble") { presentAlert() },
 /// ]) {
 ///     TextField("Title", text: $title)
 /// }
@@ -39,14 +39,14 @@ struct CatalogDemo: Identifiable {
 struct CatalogPageScaffold<Controls: View>: View {
     let page: CatalogPageID
     let code: String
-    let log: CatalogEventLog?
+    let log: CatalogEventLog
     let demos: [CatalogDemo]
     @ViewBuilder let controls: Controls
 
     init(
         _ page: CatalogPageID,
         code: String,
-        log: CatalogEventLog? = nil,
+        log: CatalogEventLog,
         demos: [CatalogDemo],
         @ViewBuilder controls: () -> Controls,
     ) {
@@ -64,19 +64,15 @@ struct CatalogPageScaffold<Controls: View>: View {
 
                 CatalogDemoGrid(demos: demos)
 
-                if Controls.self != EmptyView.self {
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("Controls")
-                            .font(.headline)
-                        controls
-                    }
-                    .accessibilityElement(children: .contain)
-                    .accessibilityIdentifier("catalog.controls")
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Controls")
+                        .font(.headline)
+                    controls
                 }
+                .accessibilityElement(children: .contain)
+                .accessibilityIdentifier("catalog.controls")
 
-                if let log {
-                    CatalogEventLogView(log: log)
-                }
+                CatalogEventLogView(log: log)
 
                 CodeSnippetView(code: code)
             }
@@ -87,19 +83,6 @@ struct CatalogPageScaffold<Controls: View>: View {
         .catalogNavigationTitle(page.title)
         .task {
             await CatalogAutoPresent.runIfRequested(demos.first)
-        }
-    }
-}
-
-extension CatalogPageScaffold where Controls == EmptyView {
-    init(
-        _ page: CatalogPageID,
-        code: String,
-        log: CatalogEventLog? = nil,
-        demos: [CatalogDemo],
-    ) {
-        self.init(page, code: code, log: log, demos: demos) {
-            EmptyView()
         }
     }
 }

@@ -29,8 +29,6 @@ open class ActionContext {
 
     private var disposeRequested = false
 
-    let spacing: CGFloat = 16
-
     init() {}
 
     #if canImport(UIKit)

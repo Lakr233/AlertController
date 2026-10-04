@@ -17,17 +17,10 @@
                 preferredHeight: nil
             )
 
-            var enableEscapeDismiss = false
-
             if let content = contentViewController as? AlertContentController {
                 content.context.bind(to: self)
-                enableEscapeDismiss = content.context.simpleDisposeRequested
+                shouldDismissWhenEscapeKeyPressed = content.context.simpleDisposeRequested
             }
-
-            transitioningDelegate = self
-            modalPresentationStyle = .custom
-            shouldDismissWhenTappedAround = false
-            shouldDismissWhenEscapeKeyPressed = enableEscapeDismiss
         }
 
         @available(*, unavailable)

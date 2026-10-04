@@ -11,7 +11,7 @@
 import Foundation
 
 /// The options the app was launched with.
-nonisolated struct CatalogLaunchOptions: Equatable, Sendable {
+nonisolated struct CatalogLaunchOptions: Sendable {
     /// The page to open at launch.
     var page: CatalogPageID?
     /// Whether the opened page presents its first demo by itself.

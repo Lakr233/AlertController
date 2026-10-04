@@ -38,8 +38,8 @@ struct CatalogSlider: View {
     let title: String
     @Binding var value: Double
     let range: ClosedRange<Double>
-    var step: Double
-    var format: (Double) -> String
+    let step: Double
+    let format: (Double) -> String
 
     init(
         _ title: String,
@@ -110,7 +110,7 @@ struct CatalogPicker<Option: Hashable>: View {
 struct CatalogTextField: View {
     let title: String
     @Binding var text: String
-    var isMultiline = false
+    let isMultiline: Bool
 
     init(_ title: String, text: Binding<String>, isMultiline: Bool = false) {
         self.title = title
@@ -161,7 +161,7 @@ struct CatalogReadout: View {
 /// A short note under a demo, for a caveat or a hint on what to try.
 struct CatalogNote: View {
     let text: String
-    var systemImage = "lightbulb"
+    let systemImage: String
 
     init(_ text: String, systemImage: String = "lightbulb") {
         self.text = text

@@ -17,27 +17,24 @@ open class AlertInputViewController: AlertViewController {
         doneButtonText: String.LocalizationValue = "Done",
         onConfirm: @escaping (String) -> Void
     ) {
+        let confirm: (ActionContext) -> Void = { context in
+            context.dispose { onConfirm(context.userObject as! String) }
+        }
         let controller = AlertInputContentController(
             title: String(localized: title),
             message: String(localized: message),
             originalText: text,
-            placeholder: String(localized: placeholder)
-        ) { context in
-            context.addAction(title: cancelButtonText) {
-                context.dispose()
-            }
-            context.addAction(title: doneButtonText, attribute: .accent) {
-                context.dispose {
-                    let text = context.userObject as! String
-                    onConfirm(text)
+            placeholder: String(localized: placeholder),
+            setupActions: { context in
+                context.addAction(title: cancelButtonText) {
+                    context.dispose()
                 }
-            }
-        } onSubmit: { context in
-            context.dispose {
-                let text = context.userObject as! String
-                onConfirm(text)
-            }
-        }
+                context.addAction(title: doneButtonText, attribute: .accent) {
+                    confirm(context)
+                }
+            },
+            onSubmit: confirm
+        )
         self.init(contentViewController: controller)
     }
 
