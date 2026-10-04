@@ -101,17 +101,41 @@
             #else
                 if #available(iOS 15.0, macCatalyst 15.0, *) /* , false */ {
                     NSLayoutConstraint.activate([
-                        contentLayoutGuide.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
-                        contentLayoutGuide.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 16),
-                        contentLayoutGuide.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -16),
-                        contentLayoutGuide.bottomAnchor.constraint(equalTo: view.keyboardLayoutGuide.topAnchor, constant: -16),
+                        contentLayoutGuide.topAnchor.constraint(
+                            equalTo: view.safeAreaLayoutGuide.topAnchor,
+                            constant: 16
+                        ),
+                        contentLayoutGuide.leftAnchor.constraint(
+                            equalTo: view.safeAreaLayoutGuide.leftAnchor,
+                            constant: 16
+                        ),
+                        contentLayoutGuide.rightAnchor.constraint(
+                            equalTo: view.safeAreaLayoutGuide.rightAnchor,
+                            constant: -16
+                        ),
+                        contentLayoutGuide.bottomAnchor.constraint(
+                            equalTo: view.keyboardLayoutGuide.topAnchor,
+                            constant: -16
+                        ),
                     ])
                 } else {
                     NSLayoutConstraint.activate([
-                        contentLayoutGuide.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
-                        contentLayoutGuide.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 16),
-                        contentLayoutGuide.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -16),
-                        contentLayoutGuide.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
+                        contentLayoutGuide.topAnchor.constraint(
+                            equalTo: view.safeAreaLayoutGuide.topAnchor,
+                            constant: 16
+                        ),
+                        contentLayoutGuide.leftAnchor.constraint(
+                            equalTo: view.safeAreaLayoutGuide.leftAnchor,
+                            constant: 16
+                        ),
+                        contentLayoutGuide.rightAnchor.constraint(
+                            equalTo: view.safeAreaLayoutGuide.rightAnchor,
+                            constant: -16
+                        ),
+                        contentLayoutGuide.bottomAnchor.constraint(
+                            equalTo: view.safeAreaLayoutGuide.bottomAnchor,
+                            constant: -16
+                        ),
                     ])
                     NotificationCenter.default.addObserver(
                         self,
@@ -196,7 +220,8 @@
             let keyboardRect = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect
             let keyboardHeight = keyboardRect?.height ?? 0
             let animation = notification.userInfo?[UIResponder.keyboardAnimationCurveUserInfoKey] as? UInt
-            let animationDuration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval
+            let animationDuration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey]
+                as? TimeInterval
             UIView.animate(
                 withDuration: animationDuration ?? 0.25,
                 delay: 0,
@@ -210,7 +235,8 @@
 
         @objc func keyboardWillHide(_ notification: Notification) {
             let animation = notification.userInfo?[UIResponder.keyboardAnimationCurveUserInfoKey] as? UInt
-            let animationDuration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval
+            let animationDuration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey]
+                as? TimeInterval
             UIView.animate(
                 withDuration: animationDuration ?? 0.25,
                 delay: 0,
@@ -318,7 +344,9 @@
             AlertTransitionAnimator(isPresenting: true)
         }
 
-        open func animationController(forDismissed _: UIViewController) -> (any UIViewControllerAnimatedTransitioning)? {
+        open func animationController(
+            forDismissed _: UIViewController
+        ) -> (any UIViewControllerAnimatedTransitioning)? {
             AlertTransitionAnimator(isPresenting: false)
         }
 

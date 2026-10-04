@@ -38,7 +38,11 @@ struct ConfigurationPage: View {
 
             Toggle("Alert image", isOn: $appearance.showsImage)
             if appearance.showsImage {
-                CatalogPicker("Symbol", selection: $appearance.imageSymbol, options: AlertAppearance.Symbol.allCases) { $0.title }
+                CatalogPicker(
+                    "Symbol",
+                    selection: $appearance.imageSymbol,
+                    options: AlertAppearance.Symbol.allCases
+                ) { $0.title }
             }
 
             Toggle("Custom background color", isOn: $appearance.customizesBackground)
@@ -56,7 +60,10 @@ struct ConfigurationPage: View {
                 log.record("Configuration reset")
             }
 
-            CatalogNote("The background color is drawn at half opacity over the blur material. The image is an SF Symbol rendered with ImageRenderer into a platform image.", systemImage: "info.circle")
+            CatalogNote(
+                "The background color is drawn at half opacity over the blur material. The image is an SF Symbol rendered with ImageRenderer into a platform image.",
+                systemImage: "info.circle"
+            )
         }
     }
 

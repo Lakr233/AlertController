@@ -44,7 +44,10 @@ struct AttributesPage: View {
                 )
             },
         ]) {
-            CatalogNote("ActionContext.Action.Attribute has only .normal and .accent. Both take their colors from AlertControllerConfiguration; change them on the Configuration page.", systemImage: "info.circle")
+            CatalogNote(
+                "ActionContext.Action.Attribute has only .normal and .accent. Both take their colors from AlertControllerConfiguration; change them on the Configuration page.",
+                systemImage: "info.circle"
+            )
         }
     }
 

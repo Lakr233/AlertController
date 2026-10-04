@@ -180,7 +180,10 @@
                 customView.translatesAutoresizingMaskIntoConstraints = false
                 let inset: CGFloat = customView is HorizontalSeprator ? 0 : 16
                 customView.leadingAnchor.constraint(equalTo: stackView.leadingAnchor, constant: inset).isActive = true
-                customView.trailingAnchor.constraint(equalTo: stackView.trailingAnchor, constant: -inset).isActive = true
+                customView.trailingAnchor.constraint(
+                    equalTo: stackView.trailingAnchor,
+                    constant: -inset
+                ).isActive = true
             }
 
             actionPresentations = AlertActionLayoutPolicy.makePresentations(from: context.actions)

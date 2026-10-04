@@ -58,8 +58,14 @@ struct LocalizationPage: View {
         ]) {
             CatalogReadout("App language", value: languageDescription)
             CatalogStepper("Unread messages", value: $unreadCount, in: 0 ... 99)
-            CatalogNote("An interpolated literal passed straight to an initializer picks the plain String overload, so its key has the number baked in and is never found. Type it as String.LocalizationValue first.", systemImage: "exclamationmark.triangle")
-            CatalogNote("The catalog ships English and Simplified Chinese. Pick the app's language in Settings on iOS, or launch the Mac app with -AppleLanguages \"(zh-Hans)\", to see the translations.", systemImage: "info.circle")
+            CatalogNote(
+                "An interpolated literal passed straight to an initializer picks the plain String overload, so its key has the number baked in and is never found. Type it as String.LocalizationValue first.",
+                systemImage: "exclamationmark.triangle"
+            )
+            CatalogNote(
+                "The catalog ships English and Simplified Chinese. Pick the app's language in Settings on iOS, or launch the Mac app with -AppleLanguages \"(zh-Hans)\", to see the translations.",
+                systemImage: "info.circle"
+            )
         }
     }
 
